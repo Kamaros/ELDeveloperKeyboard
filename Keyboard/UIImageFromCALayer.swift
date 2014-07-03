@@ -1,0 +1,21 @@
+//
+//  UIImageFromCALayer.swift
+//  ELDeveloperKeyboard
+//
+//  Created by Eric Lin on 2014-07-02.
+//  Copyright (c) 2014 Eric Lin. All rights reserved.
+//
+
+import Foundation
+import UIKit
+import QuartzCore
+
+extension CALayer {
+    func UIImageFromCALayer() -> UIImage {
+        UIGraphicsBeginImageContextWithOptions(self.frame.size, true, 0)
+        self.renderInContext(UIGraphicsGetCurrentContext())
+        let outputImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return outputImage
+    }
+}
