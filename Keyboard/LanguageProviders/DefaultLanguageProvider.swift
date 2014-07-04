@@ -20,6 +20,6 @@ class DefaultLanguageProvider: LanguageProvider {
         ["", "", "", "`", "[", "]", "\\", "_", "="],
         ["", "", ",", ".", "/", ";", "'"]
     ]
-    var autocapitalizeAfter: Array<String> = []
-    var suggestionDictionary: Dictionary<String, Int> = [:]
+    var autocapitalizeAfter = Array<String>()
+    var suggestionDictionary = Array<WeightedString>()
 }

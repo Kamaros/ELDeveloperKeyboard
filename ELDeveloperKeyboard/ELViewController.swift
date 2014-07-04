@@ -25,6 +25,7 @@ class ELViewController: UIViewController {
         self.view = UIView(frame: UIScreen.mainScreen().applicationFrame)
         self.textView = UITextView(frame: self.view.frame)
         self.textView.scrollEnabled = true
+        self.textView.userInteractionEnabled = true
         self.view.addSubview(self.textView)
     }
     

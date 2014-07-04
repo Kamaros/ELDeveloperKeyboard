@@ -19,10 +19,15 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate {
         ["z", "x", "c", "v", "b", "n", "m"]
     ]
     
-    let languageProviders = CircularArray(items: [SwiftLanguageProvider(), DefaultLanguageProvider()] as Array<LanguageProvider>)
+    let suggestionProvider: SuggestionProvider = SuggestionTrie()
+    
+    let languageProviders = CircularArray(items: [DefaultLanguageProvider(), SwiftLanguageProvider()] as Array<LanguageProvider>)
     
     let spacing: CGFloat = 4.0
     let predictiveTextBoxHeight: CGFloat = 24.0
+    var predictiveTextButtonWidth: CGFloat {
+        return (self.view.frame.width - 5 * spacing) / 4.0
+    }
     var keyWidth: CGFloat {
         return (self.view.frame.width - 11 * spacing) / 10.0
     }
@@ -30,7 +35,10 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate {
         return (self.view.frame.height - 5 * spacing - predictiveTextBoxHeight) / 4.0
     }
     
-    // MARK - IBOutlets
+    // MARK - Interface
+    
+    var predictiveTextScrollView: UIScrollView?
+    var suggestionButtons = Array<UIButton>()
     
     var characterButtons: Array<Array<CharacterButton>> = [
         [],
@@ -45,25 +53,29 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate {
     var returnButton: KeyButton!
     var currentLanguageLabel: UILabel!
     
+    // MARK - Timers
+    
     var deleteButtonTimer: NSTimer?
     var spaceButtonTimer: NSTimer?
     
     // MARK - Properties
     
     var proxy: UITextDocumentProxy {
-    return self.textDocumentProxy as UITextDocumentProxy
+        return self.textDocumentProxy as UITextDocumentProxy
     }
     
     var languageProvider: LanguageProvider {
-    didSet {
-        for (rowIndex, row) in enumerate(characterButtons) {
-            for (characterButtonIndex, characterButton) in enumerate(row) {
-                characterButton.secondaryCharacter = languageProvider.secondaryCharacters[rowIndex][characterButtonIndex]
-                characterButton.tertiaryCharacter = languageProvider.tertiaryCharacters[rowIndex][characterButtonIndex]
+        didSet {
+            for (rowIndex, row) in enumerate(characterButtons) {
+                for (characterButtonIndex, characterButton) in enumerate(row) {
+                    characterButton.secondaryCharacter = languageProvider.secondaryCharacters[rowIndex][characterButtonIndex]
+                    characterButton.tertiaryCharacter = languageProvider.tertiaryCharacters[rowIndex][characterButtonIndex]
+                }
             }
+            currentLanguageLabel.text = languageProvider.language
+            suggestionProvider.clear()
+            suggestionProvider.loadWeightedStrings(languageProvider.suggestionDictionary)
         }
-        currentLanguageLabel.text = languageProvider.language
-    }
     }
     
     enum ShiftMode {
@@ -71,20 +83,20 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate {
     }
     
     var shiftMode: ShiftMode {
-    didSet {
-        shiftButton.selected = (shiftMode == .Caps)
-        for row in characterButtons {
-            for characterButton in row {
-                switch shiftMode {
-                case .Off:
-                    characterButton.primaryLabel.text = characterButton.primaryCharacter.lowercaseString
-                case .On, .Caps:
-                    characterButton.primaryLabel.text = characterButton.primaryCharacter.uppercaseString
-                }
+        didSet {
+            shiftButton.selected = (shiftMode == .Caps)
+            for row in characterButtons {
+                for characterButton in row {
+                    switch shiftMode {
+                    case .Off:
+                        characterButton.primaryLabel.text = characterButton.primaryCharacter.lowercaseString
+                    case .On, .Caps:
+                        characterButton.primaryLabel.text = characterButton.primaryCharacter.uppercaseString
+                    }
                 
+                }
             }
         }
-    }
     }
     
     // MARK - Constructors
@@ -148,7 +160,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate {
         }
     }
     
-    func handleLongPressForDeleteButton(gestureRecognizer: UILongPressGestureRecognizer) {
+    func handleLongPressForDeleteButtonWithGestureRecognizer(gestureRecognizer: UILongPressGestureRecognizer) {
         switch gestureRecognizer.state {
         case .Began:
             if !deleteButtonTimer {
@@ -162,7 +174,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate {
         }
     }
     
-    func handleSwipeLeftForDeleteButton(gestureRecognizer: UISwipeGestureRecognizer) {
+    func handleSwipeLeftForDeleteButtonWithGestureRecognizer(gestureRecognizer: UISwipeGestureRecognizer) {
         // TODO: Figure out an implementation that doesn't use bridgeToObjectiveC, in case of funny unicode characters.
         if let documentContextBeforeInput = proxy.documentContextBeforeInput?.bridgeToObjectiveC() {
             if documentContextBeforeInput.length > 0 {
@@ -198,7 +210,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate {
     }
     
     func tabButtonPressed(sender: KeyButton) {
-        for i in 0..4 {// TODO: Update to use tab setting.
+        for i in 0..4 { // TODO: Update to use tab setting.
             proxy.insertText(" ")
         }
     }
@@ -212,7 +224,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate {
         proxy.insertText(" ")
     }
     
-    func handleLongPressForSpaceButton(gestureRecognizer: UISwipeGestureRecognizer) {
+    func handleLongPressForSpaceButtonWithGestureRecognizer(gestureRecognizer: UISwipeGestureRecognizer) {
         switch gestureRecognizer.state {
         case .Began:
             if !spaceButtonTimer {
@@ -231,7 +243,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate {
         proxy.insertText(" ")
     }
     
-    func handleSwipeLeftForSpaceButton(gestureRecognizer: UISwipeGestureRecognizer) {
+    func handleSwipeLeftForSpaceButtonWithGestureRecognizer(gestureRecognizer: UISwipeGestureRecognizer) {
         UIView.animateWithDuration(0.1, animations: {
             self.moveButtonLabels(-self.keyWidth)
             }, completion: {
@@ -246,7 +258,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate {
         )
     }
     
-    func handleSwipeRightForSpaceButton(gestureRecognizer: UISwipeGestureRecognizer) {
+    func handleSwipeRightForSpaceButtonWithGestureRecognizer(gestureRecognizer: UISwipeGestureRecognizer) {
         UIView.animateWithDuration(0.1, animations: {
             self.moveButtonLabels(self.keyWidth)
             }, completion: {
@@ -277,6 +289,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate {
         case .Caps:
             proxy.insertText(button.primaryCharacter.uppercaseString)
         }
+        updateSuggestions()
     }
     
     func handleSwipeUpForButton(button: CharacterButton) {
@@ -284,6 +297,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate {
         if countElements(button.secondaryCharacter) > 1 {
             proxy.insertText(" ")
         }
+        updateSuggestions()
     }
     
     func handleSwipeDownForButton(button: CharacterButton) {
@@ -291,6 +305,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate {
         if countElements(button.tertiaryCharacter) > 1 {
             proxy.insertText(" ")
         }
+        updateSuggestions()
     }
     
     // MARK - Helper methods
@@ -322,10 +337,10 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate {
         deleteButton.addTarget(self, action: "deleteButtonPressed:", forControlEvents: .TouchUpInside)
         self.view.addSubview(deleteButton)
         
-        let deleteButtonLongPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: "handleLongPressForDeleteButton:")
+        let deleteButtonLongPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: "handleLongPressForDeleteButtonWithGestureRecognizer:")
         deleteButton.addGestureRecognizer(deleteButtonLongPressGestureRecognizer)
         
-        let deleteButtonSwipeLeftGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipeLeftForDeleteButton:")
+        let deleteButtonSwipeLeftGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipeLeftForDeleteButtonWithGestureRecognizer:")
         deleteButtonSwipeLeftGestureRecognizer.direction = .Left
         deleteButton.addGestureRecognizer(deleteButtonSwipeLeftGestureRecognizer)
     }
@@ -357,14 +372,14 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate {
         currentLanguageLabel.text = "\(languageProvider.language)"
         spaceButton.addSubview(currentLanguageLabel)
         
-        let spaceButtonLongPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: "handleLongPressForSpaceButton:")
+        let spaceButtonLongPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: "handleLongPressForSpaceButtonWithGestureRecognizer:")
         spaceButton.addGestureRecognizer(spaceButtonLongPressGestureRecognizer)
         
-        let spaceButtonSwipeLeftGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipeLeftForSpaceButton:")
+        let spaceButtonSwipeLeftGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipeLeftForSpaceButtonWithGestureRecognizer:")
         spaceButtonSwipeLeftGestureRecognizer.direction = .Left
         spaceButton.addGestureRecognizer(spaceButtonSwipeLeftGestureRecognizer)
         
-        let spaceButtonSwipeRightGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipeRightForSpaceButton:")
+        let spaceButtonSwipeRightGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipeRightForSpaceButtonWithGestureRecognizer:")
         spaceButtonSwipeRightGestureRecognizer.direction = .Right
         spaceButton.addGestureRecognizer(spaceButtonSwipeRightGestureRecognizer)
     }
@@ -412,5 +427,17 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate {
             }
         }
         currentLanguageLabel.frame.offset(dx: dx, dy: 0.0)
+    }
+    
+    func updateSuggestions() {
+        // TODO: Figure out an implementation that doesn't use bridgeToObjectiveC, in case of funny unicode characters.
+        if let documentContextBeforeInput = proxy.documentContextBeforeInput?.bridgeToObjectiveC() {
+            let length = documentContextBeforeInput.length
+            if length > 0 && NSCharacterSet.letterCharacterSet().characterIsMember(documentContextBeforeInput.characterAtIndex(length - 1)) {
+                let components = documentContextBeforeInput.componentsSeparatedByCharactersInSet(NSCharacterSet.letterCharacterSet().invertedSet) as Array<String>
+                let prefix = components[components.endIndex - 1]
+                // TODO: Create buttons and scroll view.
+            }
+        }
     }
 }

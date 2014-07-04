@@ -13,5 +13,5 @@ protocol LanguageProvider {
     var secondaryCharacters: Array<Array<String>> { get }
     var tertiaryCharacters: Array<Array<String>> { get }
     var autocapitalizeAfter: Array<String> { get }
-    var suggestionDictionary: Dictionary<String, Int> { get }
+    var suggestionDictionary: Array<WeightedString> { get }
 }
