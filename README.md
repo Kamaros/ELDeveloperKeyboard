@@ -5,4 +5,4 @@ An iOS custom keyboard extension written in Swift designed to make it much, much
 
 ## Screenshots
 
-![alt text](../iOS\ Simulator\ Screenshot.png?raw=true "Screenshot")
+![alt text](iOS\ Simulator\ Screenshot.png?raw=true "Screenshot")
