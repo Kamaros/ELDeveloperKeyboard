@@ -26,6 +26,7 @@
 		076EF5F819650F00009A561C /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 076EF5F719650F00009A561C /* README.md */; };
 		076EF5FB19650F24009A561C /* SuggestionProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 076EF5FA19650F24009A561C /* SuggestionProvider.swift */; };
 		076EF5FD19650FB5009A561C /* SuggestionTrie.swift in Sources */ = {isa = PBXBuildFile; fileRef = 076EF5FC19650FB5009A561C /* SuggestionTrie.swift */; };
+		0786C55D1968A92500E4E410 /* iOS Simulator Screenshot.png in Resources */ = {isa = PBXBuildFile; fileRef = 0786C55C1968A92500E4E410 /* iOS Simulator Screenshot.png */; };
 		07D5B820196622350046B202 /* WeightedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D5B81F196622350046B202 /* WeightedString.swift */; };
 /* End PBXBuildFile section */
 
@@ -83,6 +84,7 @@
 		076EF5F719650F00009A561C /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		076EF5FA19650F24009A561C /* SuggestionProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SuggestionProvider.swift; sourceTree = "<group>"; };
 		076EF5FC19650FB5009A561C /* SuggestionTrie.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SuggestionTrie.swift; sourceTree = "<group>"; };
+		0786C55C1968A92500E4E410 /* iOS Simulator Screenshot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iOS Simulator Screenshot.png"; sourceTree = "<group>"; };
 		07D5B81F196622350046B202 /* WeightedString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeightedString.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -130,6 +132,7 @@
 				076EF5D51965061C009A561C /* Keyboard */,
 				076EF58919650431009A561C /* Products */,
 				076EF5F719650F00009A561C /* README.md */,
+				0786C55C1968A92500E4E410 /* iOS Simulator Screenshot.png */,
 				076EF5F519650D65009A561C /* .gitignore */,
 			);
 			sourceTree = "<group>";
@@ -302,6 +305,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0786C55D1968A92500E4E410 /* iOS Simulator Screenshot.png in Resources */,
 				076EF59019650431009A561C /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
