@@ -33,4 +33,9 @@ class ELViewController: UIViewController {
         super.viewDidLoad()
         self.textView.becomeFirstResponder()
     }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        self.becomeFirstResponder()
+    }
 }

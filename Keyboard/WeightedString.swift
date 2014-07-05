@@ -8,6 +8,9 @@
 
 import Foundation
 
+/**
+ @a WeightedString is a structure representing a term and its relative frequency, for use in autosuggestion.
+*/
 struct WeightedString {
     let term: String
     let weight: Int

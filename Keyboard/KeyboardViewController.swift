@@ -9,9 +9,12 @@
 import Foundation
 import UIKit
 
-class KeyboardViewController: UIInputViewController, CharacterButtonDelegate {
+/**
+ An iOS custom keyboard extension written in Swift designed to make it much, much easier to type code on an iOS device.
+*/
+class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, SuggestionButtonDelegate {
     
-    // MARK - Constants
+    // MARK: Constants
     
     let primaryCharacters = [
         ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
@@ -26,7 +29,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate {
     let spacing: CGFloat = 4.0
     let predictiveTextBoxHeight: CGFloat = 24.0
     var predictiveTextButtonWidth: CGFloat {
-        return (self.view.frame.width - 5 * spacing) / 4.0
+        return (self.view.frame.width - 4 * spacing) / 3.0
     }
     var keyWidth: CGFloat {
         return (self.view.frame.width - 11 * spacing) / 10.0
@@ -35,10 +38,10 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate {
         return (self.view.frame.height - 5 * spacing - predictiveTextBoxHeight) / 4.0
     }
     
-    // MARK - Interface
+    // MARK: Interface
     
-    var predictiveTextScrollView: UIScrollView?
-    var suggestionButtons = Array<UIButton>()
+    var predictiveTextScrollView: PredictiveTextScrollView?
+    var suggestionButtons = Array<SuggestionButton>()
     
     var characterButtons: Array<Array<CharacterButton>> = [
         [],
@@ -53,12 +56,12 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate {
     var returnButton: KeyButton!
     var currentLanguageLabel: UILabel!
     
-    // MARK - Timers
+    // MARK: Timers
     
     var deleteButtonTimer: NSTimer?
     var spaceButtonTimer: NSTimer?
     
-    // MARK - Properties
+    // MARK: Properties
     
     var proxy: UITextDocumentProxy {
         return self.textDocumentProxy as UITextDocumentProxy
@@ -99,7 +102,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate {
         }
     }
     
-    // MARK - Constructors
+    // MARK: Constructors
     
     init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
         self.shiftMode = .Off
@@ -107,7 +110,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
     
-    // MARK - Overridden methods
+    // MARK: Overridden methods
     
     override func updateViewConstraints() {
         super.updateViewConstraints()
@@ -136,7 +139,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate {
         // The app has just changed the document's contents, the document context has been updated.
     }
     
-    // MARK - Event handlers
+    // MARK: Event handlers
     
     func shiftButtonPressed(sender: KeyButton) {
         switch shiftMode {
@@ -158,6 +161,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate {
         default:
             proxy.deleteBackward()
         }
+        updateSuggestions()
     }
     
     func handleLongPressForDeleteButtonWithGestureRecognizer(gestureRecognizer: UILongPressGestureRecognizer) {
@@ -171,6 +175,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate {
         default:
             deleteButtonTimer?.invalidate()
             deleteButtonTimer = nil
+            updateSuggestions()
         }
     }
     
@@ -203,6 +208,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate {
                 }
             }
         }
+        updateSuggestions()
     }
     
     func handleDeleteButtonTimerTick(timer: NSTimer) {
@@ -222,6 +228,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate {
             }
         }
         proxy.insertText(" ")
+        updateSuggestions()
     }
     
     func handleLongPressForSpaceButtonWithGestureRecognizer(gestureRecognizer: UISwipeGestureRecognizer) {
@@ -235,7 +242,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate {
         default:
             spaceButtonTimer?.invalidate()
             spaceButtonTimer = nil
-            break
+            updateSuggestions()
         }
     }
     
@@ -275,9 +282,10 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate {
     
     func returnButtonPressed(sender: KeyButton) {
         proxy.insertText("\n")
+        updateSuggestions()
     }
     
-    // MARK - KeyButtonDelegate
+    // MARK: CharacterButtonDelegate
     
     func handlePressForButton(button: CharacterButton) {
         switch shiftMode {
@@ -308,13 +316,28 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate {
         updateSuggestions()
     }
     
-    // MARK - Helper methods
+    // MARK: SuggestionButtonDelegate
+    
+    func handlePressForButton(button: SuggestionButton) {
+        if let lastWordTyped = getLastWordTyped() {
+            for letter in lastWordTyped {
+                proxy.deleteBackward()
+            }
+            proxy.insertText(button.title + " ")
+            for suggestionButton in suggestionButtons {
+                suggestionButton.removeFromSuperview()
+            }
+        }
+    }
+    
+    // MARK: Helper methods
     
     func initializeKeyboard() {
         for subview in self.view.subviews as Array<UIView> {
             subview.removeFromSuperview() // Remove all buttons and gesture recognizers when view is recreated during orientation changes.
         }
-        
+
+        addPredictiveTextScrollView()
         addShiftButton()
         addDeleteButton()
         addTabButton()
@@ -322,6 +345,11 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate {
         addSpaceButton()
         addReturnButton()
         addCharacterButtons()
+    }
+    
+    func addPredictiveTextScrollView() {
+        predictiveTextScrollView = PredictiveTextScrollView(frame: CGRectMake(0.0, 0.0, self.view.frame.width, predictiveTextBoxHeight))
+        self.view.addSubview(predictiveTextScrollView)
     }
     
     func addShiftButton() {
@@ -430,14 +458,31 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate {
     }
     
     func updateSuggestions() {
+        for suggestionButton in suggestionButtons {
+            suggestionButton.removeFromSuperview()
+        }
+        
         // TODO: Figure out an implementation that doesn't use bridgeToObjectiveC, in case of funny unicode characters.
+        if let lastWordTyped = getLastWordTyped() {
+            var x = spacing
+            for suggestion in suggestionProvider.suggestionsForPrefix(lastWordTyped) {
+                let suggestionButton = SuggestionButton(frame: CGRectMake(x, 0.0, predictiveTextButtonWidth, predictiveTextBoxHeight), title: suggestion, delegate: self)
+                predictiveTextScrollView?.addSubview(suggestionButton)
+                suggestionButtons += suggestionButton
+                x += predictiveTextButtonWidth + spacing
+            }
+            predictiveTextScrollView!.contentSize = CGSizeMake(x, predictiveTextBoxHeight)
+        }
+    }
+    
+    func getLastWordTyped() -> String? {
         if let documentContextBeforeInput = proxy.documentContextBeforeInput?.bridgeToObjectiveC() {
             let length = documentContextBeforeInput.length
             if length > 0 && NSCharacterSet.letterCharacterSet().characterIsMember(documentContextBeforeInput.characterAtIndex(length - 1)) {
                 let components = documentContextBeforeInput.componentsSeparatedByCharactersInSet(NSCharacterSet.letterCharacterSet().invertedSet) as Array<String>
-                let prefix = components[components.endIndex - 1]
-                // TODO: Create buttons and scroll view.
+                return components[components.endIndex - 1]
             }
         }
+        return nil
     }
 }

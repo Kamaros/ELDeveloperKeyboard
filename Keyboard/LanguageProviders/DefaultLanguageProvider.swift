@@ -8,6 +8,9 @@
 
 import Foundation
 
+/**
+ A default implementation of the @a LanguageProvider interface, representing no specific programming language. Secondary and tertiary characters match their respective positions on a standard QWERTY keyboard.
+*/
 class DefaultLanguageProvider: LanguageProvider {
     var language = "Default"
     var secondaryCharacters = [

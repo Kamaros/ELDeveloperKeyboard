@@ -8,9 +8,12 @@
 
 import Foundation
 
+/**
+ A circular array that can be cycled through.
+*/
 class CircularArray<T> {
     
-    // MARK - Properties
+    // MARK: Properties
     
     let items: Array<T>
     
@@ -37,13 +40,13 @@ class CircularArray<T> {
         return index == 0 ? items[items.count - 1] : items[index - 1]
     }
     
-    // MARK - Constructors
+    // MARK: Constructors
     
     init(items: Array<T>) {
         self.items = items
     }
     
-    // Methods
+    // MARK: Methods
     
     func increment() {
         if items.count > 0 {

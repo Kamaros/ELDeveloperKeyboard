@@ -8,18 +8,20 @@
 
 import Foundation
 
-// Ternary search tree.
+/**
+ An implementation of the @a SuggestionProvider protocol that uses a ternary search tree (trie) to store and search for terms.
+*/
 class SuggestionTrie: SuggestionProvider {
     
-    // MARK - Properties
+    // MARK: Properties
 
     var root: SuggestionNode?
     
-    // MARK - Constructors
+    // MARK: Constructors
     
     init() {}
     
-    // MARK - SuggestionProvider
+    // MARK: SuggestionProvider
 
     func suggestionsForPrefix(prefix: String) -> Array<String> {
         if let node = searchForNodeMatchingPrefix(prefix, rootNode: root) {
@@ -45,7 +47,7 @@ class SuggestionTrie: SuggestionProvider {
         deleteNode(&root)
     }
     
-    // MARK - Helper Methods
+    // MARK: Helper Methods
     
     func insertString(s: String, weight: Int) {
         if let node = searchForNodeMatchingPrefix(s, rootNode: root) {
@@ -115,9 +117,12 @@ class SuggestionTrie: SuggestionProvider {
         }
     }
     
+    /**
+     A @a SuggestionTrie node, representing a term.
+    */
     class SuggestionNode {
         
-        // MARK - Properties
+        // MARK: Properties
 
         let term: String
         var weight: Int
@@ -130,7 +135,7 @@ class SuggestionTrie: SuggestionProvider {
         var equalKid: SuggestionNode?
         var hiKid: SuggestionNode?
         
-        // MARK - Constructors
+        // MARK: Constructors
         
         init(term: String, isWordEnd: Bool, weight: Int) {
             self.term = term
