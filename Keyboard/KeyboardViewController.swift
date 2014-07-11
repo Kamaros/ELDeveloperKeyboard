@@ -24,7 +24,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     
     let suggestionProvider: SuggestionProvider = SuggestionTrie()
     
-    let languageProviders = CircularArray(items: [DefaultLanguageProvider(), SwiftLanguageProvider()] as Array<LanguageProvider>)
+    let languageProviders = CircularArray(items: [DefaultLanguageProvider(), SwiftLanguageProvider()] as [LanguageProvider])
     
     let spacing: CGFloat = 4.0
     let predictiveTextBoxHeight: CGFloat = 24.0
@@ -41,9 +41,9 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     // MARK: Interface
     
     var predictiveTextScrollView: PredictiveTextScrollView?
-    var suggestionButtons = Array<SuggestionButton>()
+    var suggestionButtons = [SuggestionButton]()
     
-    var characterButtons: Array<Array<CharacterButton>> = [
+    var characterButtons: [[CharacterButton]] = [
         [],
         [],
         []
@@ -155,7 +155,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     func deleteButtonPressed(sender: KeyButton) {
         switch proxy.documentContextBeforeInput {
         case let s where s?.hasSuffix("    ") == true: // Cursor in front of tab, so delete tab.
-            for i in 0..4 { // TODO: Update to use tab setting.
+            for i in 0..<4 { // TODO: Update to use tab setting.
                 proxy.deleteBackward()
             }
         default:
@@ -203,7 +203,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
                     charactersToDelete = 1
                 }
                 
-                for i in 0..charactersToDelete {
+                for i in 0..<charactersToDelete {
                     proxy.deleteBackward()
                 }
             }
@@ -216,7 +216,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     }
     
     func tabButtonPressed(sender: KeyButton) {
-        for i in 0..4 { // TODO: Update to use tab setting.
+        for i in 0..<4 { // TODO: Update to use tab setting.
             proxy.insertText(" ")
         }
     }
@@ -333,7 +333,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     // MARK: Helper methods
     
     func initializeKeyboard() {
-        for subview in self.view.subviews as Array<UIView> {
+        for subview in self.view.subviews as [UIView] {
             subview.removeFromSuperview() // Remove all buttons and gesture recognizers when view is recreated during orientation changes.
         }
 
@@ -479,7 +479,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
         if let documentContextBeforeInput = proxy.documentContextBeforeInput?.bridgeToObjectiveC() {
             let length = documentContextBeforeInput.length
             if length > 0 && NSCharacterSet.letterCharacterSet().characterIsMember(documentContextBeforeInput.characterAtIndex(length - 1)) {
-                let components = documentContextBeforeInput.componentsSeparatedByCharactersInSet(NSCharacterSet.letterCharacterSet().invertedSet) as Array<String>
+                let components = documentContextBeforeInput.componentsSeparatedByCharactersInSet(NSCharacterSet.letterCharacterSet().invertedSet) as [String]
                 return components[components.endIndex - 1]
             }
         }

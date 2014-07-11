@@ -17,14 +17,14 @@ protocol SuggestionProvider {
      @param prefix
             The prefix string that suggestions begin with.
     */
-    func suggestionsForPrefix(prefix: String) -> Array<String>
+    func suggestionsForPrefix(prefix: String) -> [String]
     
     /**
      Loads autosuggest terms.
      @param weightedStrings
             A list of @a WeightedStrings representing autosuggest terms and their relative frequencies.
     */
-    func loadWeightedStrings(weightedStrings: Array<WeightedString>)
+    func loadWeightedStrings(weightedStrings: [WeightedString])
     
     /**
      Clears previously loaded autosuggest terms.

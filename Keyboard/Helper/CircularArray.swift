@@ -15,7 +15,7 @@ class CircularArray<T> {
     
     // MARK: Properties
     
-    let items: Array<T>
+    let items: [T]
     
     var index = 0
     
@@ -42,7 +42,7 @@ class CircularArray<T> {
     
     // MARK: Constructors
     
-    init(items: Array<T>) {
+    init(items: [T]) {
         self.items = items
     }
     

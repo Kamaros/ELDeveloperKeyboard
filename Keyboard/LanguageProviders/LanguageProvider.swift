@@ -16,14 +16,14 @@ protocol LanguageProvider {
     var language: String { get }
     
     /** An array of String arrays, defining the keyboard's secondary characters. */
-    var secondaryCharacters: Array<Array<String>> { get }
+    var secondaryCharacters: [[String]] { get }
     
     /** An array of String arrays, defining the keyboard's tertiary characters. */
-    var tertiaryCharacters: Array<Array<String>> { get }
+    var tertiaryCharacters: [[String]] { get }
     
     /** A list of words that usually precede a capitalized word. */
-    var autocapitalizeAfter: Array<String> { get }
+    var autocapitalizeAfter: [String] { get }
     
     /** An array of @a WeightedStrings representing the language's keywords and their relative frequencies. */
-    var suggestionDictionary: Array<WeightedString> { get }
+    var suggestionDictionary: [WeightedString] { get }
 }

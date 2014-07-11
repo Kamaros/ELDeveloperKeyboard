@@ -23,12 +23,12 @@ class SuggestionTrie: SuggestionProvider {
     
     // MARK: SuggestionProvider
 
-    func suggestionsForPrefix(prefix: String) -> Array<String> {
+    func suggestionsForPrefix(prefix: String) -> [String] {
         if let node = searchForNodeMatchingPrefix(prefix, rootNode: root) {
-            var weightedSuggestions = Array<WeightedString>()
+            var weightedSuggestions = [WeightedString]()
             findSuggestionsForNode(node.equalKid, suggestions: &weightedSuggestions)
             weightedSuggestions.sort() { $0.weight >= $1.weight }
-            var suggestions = Array<String>()
+            var suggestions = [String]()
             for suggestion in weightedSuggestions {
                 suggestions += suggestion.term
             }
@@ -37,7 +37,7 @@ class SuggestionTrie: SuggestionProvider {
         return []
     }
     
-    func loadWeightedStrings(weightedStrings: Array<WeightedString>) {
+    func loadWeightedStrings(weightedStrings: [WeightedString]) {
         for ws in weightedStrings {
             insertString(ws.term, weight: ws.weight)
         }
@@ -65,7 +65,7 @@ class SuggestionTrie: SuggestionProvider {
                 if count == charIndex + 1 {
                     node = SuggestionNode(term: s, weight: weight)
                 } else {
-                    node = SuggestionNode(term: s[0..charIndex + 1])
+                    node = SuggestionNode(term: s[0..<charIndex + 1])
                 }
             }
 
@@ -92,11 +92,11 @@ class SuggestionTrie: SuggestionProvider {
         } else if prefix[0] > rootNode!.char {
             return searchForNodeMatchingPrefix(prefix, rootNode: rootNode!.hiKid)
         } else {
-            return searchForNodeMatchingPrefix(prefix[1..count], rootNode: rootNode!.equalKid)
+            return searchForNodeMatchingPrefix(prefix[1..<count], rootNode: rootNode!.equalKid)
         }
     }
     
-    func findSuggestionsForNode(node: SuggestionNode?, inout suggestions: Array<WeightedString>) {
+    func findSuggestionsForNode(node: SuggestionNode?, inout suggestions: [WeightedString]) {
         if let n = node {
             if n.isWordEnd {
                 suggestions += WeightedString(term: n.term, weight: n.weight)
