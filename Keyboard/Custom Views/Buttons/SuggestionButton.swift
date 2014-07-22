@@ -29,7 +29,7 @@ class SuggestionButton: UIButton {
     
     var title: String {
         didSet {
-            self.setTitle(title, forState: .Normal)
+            setTitle(title, forState: .Normal)
         }
     }
     
@@ -52,7 +52,7 @@ class SuggestionButton: UIButton {
     
     // MARK: Event handlers
     
-    func buttonPressed(button: SuggestionButton) {
+    private func buttonPressed(button: SuggestionButton) {
         delegate?.handlePressForButton(self)
     }
 }

@@ -15,7 +15,7 @@ class SuggestionTrie: SuggestionProvider {
     
     // MARK: Properties
 
-    var root: SuggestionNode?
+    private var root: SuggestionNode?
     
     // MARK: Constructors
     
@@ -49,7 +49,7 @@ class SuggestionTrie: SuggestionProvider {
     
     // MARK: Helper Methods
     
-    func insertString(s: String, weight: Int) {
+    private func insertString(s: String, weight: Int) {
         if let node = searchForNodeMatchingPrefix(s, rootNode: root) {
             node.isWordEnd = true
             node.weight = weight
@@ -58,7 +58,7 @@ class SuggestionTrie: SuggestionProvider {
         }
     }
 
-    func insertString(s: String, charIndex: Int, weight: Int, inout node: SuggestionNode?) {
+    private func insertString(s: String, charIndex: Int, weight: Int, inout node: SuggestionNode?) {
         let count = countElements(s)
         if count > 0 {
             if !node {
@@ -79,7 +79,7 @@ class SuggestionTrie: SuggestionProvider {
         }
     }
     
-    func searchForNodeMatchingPrefix(prefix: String, rootNode: SuggestionNode?) -> SuggestionNode? {
+    private func searchForNodeMatchingPrefix(prefix: String, rootNode: SuggestionNode?) -> SuggestionNode? {
         let count = countElements(prefix)
         if !rootNode || count == 0 {
             return nil
@@ -96,7 +96,7 @@ class SuggestionTrie: SuggestionProvider {
         }
     }
     
-    func findSuggestionsForNode(node: SuggestionNode?, inout suggestions: [WeightedString]) {
+    private func findSuggestionsForNode(node: SuggestionNode?, inout suggestions: [WeightedString]) {
         if let n = node {
             if n.isWordEnd {
                 suggestions += WeightedString(term: n.term, weight: n.weight)
@@ -108,7 +108,7 @@ class SuggestionTrie: SuggestionProvider {
         }
     }
     
-    func deleteNode(inout node: SuggestionNode?) {
+    private func deleteNode(inout node: SuggestionNode?) {
         if let n = node {
             deleteNode(&n.loKid)
             deleteNode(&n.equalKid)
@@ -120,7 +120,7 @@ class SuggestionTrie: SuggestionProvider {
     /**
      A @a SuggestionTrie node, representing a term.
     */
-    class SuggestionNode {
+    private class SuggestionNode {
         
         // MARK: Properties
 

@@ -16,58 +16,70 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     
     // MARK: Constants
     
-    let primaryCharacters = [
+    private let primaryCharacters = [
         ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
         ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
         ["z", "x", "c", "v", "b", "n", "m"]
     ]
     
-    let suggestionProvider: SuggestionProvider = SuggestionTrie()
+    private let suggestionProvider: SuggestionProvider = SuggestionTrie()
     
-    let languageProviders = CircularArray(items: [DefaultLanguageProvider(), SwiftLanguageProvider()] as [LanguageProvider])
+    private let languageProviders = CircularArray(items: [DefaultLanguageProvider(), SwiftLanguageProvider()] as [LanguageProvider])
     
-    let spacing: CGFloat = 4.0
-    let predictiveTextBoxHeight: CGFloat = 24.0
-    var predictiveTextButtonWidth: CGFloat {
+    private let spacing: CGFloat = 4.0
+    private let predictiveTextBoxHeight: CGFloat = 24.0
+    private var predictiveTextButtonWidth: CGFloat {
         return (self.view.frame.width - 4 * spacing) / 3.0
     }
-    var keyWidth: CGFloat {
+    private var keyWidth: CGFloat {
         return (self.view.frame.width - 11 * spacing) / 10.0
     }
-    var keyHeight: CGFloat {
+    private var keyHeight: CGFloat {
         return (self.view.frame.height - 5 * spacing - predictiveTextBoxHeight) / 4.0
     }
     
     // MARK: Interface
     
-    var predictiveTextScrollView: PredictiveTextScrollView?
-    var suggestionButtons = [SuggestionButton]()
+    private var swipeView: SwipeView!
+    private var predictiveTextScrollView: PredictiveTextScrollView!
+    private var suggestionButtons = [SuggestionButton]()
     
-    var characterButtons: [[CharacterButton]] = [
+    private var characterButtons: [[CharacterButton]] = [
         [],
         [],
         []
     ]
-    var shiftButton: KeyButton!
-    var deleteButton: KeyButton!
-    var tabButton: KeyButton!
-    var nextKeyboardButton: KeyButton!
-    var spaceButton: KeyButton!
-    var returnButton: KeyButton!
-    var currentLanguageLabel: UILabel!
+    private var shiftButton: KeyButton!
+    private var deleteButton: KeyButton!
+    private var tabButton: KeyButton!
+    private var nextKeyboardButton: KeyButton!
+    private var spaceButton: KeyButton!
+    private var returnButton: KeyButton!
+    private var currentLanguageLabel: UILabel!
     
     // MARK: Timers
     
-    var deleteButtonTimer: NSTimer?
-    var spaceButtonTimer: NSTimer?
+    private var deleteButtonTimer: NSTimer?
+    private var spaceButtonTimer: NSTimer?
     
     // MARK: Properties
     
-    var proxy: UITextDocumentProxy {
+    private var proxy: UITextDocumentProxy {
         return self.textDocumentProxy as UITextDocumentProxy
     }
     
-    var languageProvider: LanguageProvider {
+    private var lastWordTyped: String? {
+        if let documentContextBeforeInput = proxy.documentContextBeforeInput?.bridgeToObjectiveC() {
+            let length = documentContextBeforeInput.length
+            if length > 0 && NSCharacterSet.letterCharacterSet().characterIsMember(documentContextBeforeInput.characterAtIndex(length - 1)) {
+                let components = documentContextBeforeInput.componentsSeparatedByCharactersInSet(NSCharacterSet.letterCharacterSet().invertedSet) as [String]
+                return components[components.endIndex - 1]
+            }
+        }
+        return nil
+    }
+    
+    private var languageProvider: LanguageProvider {
         didSet {
             for (rowIndex, row) in enumerate(characterButtons) {
                 for (characterButtonIndex, characterButton) in enumerate(row) {
@@ -81,11 +93,11 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
         }
     }
     
-    enum ShiftMode {
+    private enum ShiftMode {
         case Off, On, Caps
     }
     
-    var shiftMode: ShiftMode {
+    private var shiftMode: ShiftMode {
         didSet {
             shiftButton.selected = (shiftMode == .Caps)
             for row in characterButtons {
@@ -121,8 +133,8 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
         self.view.backgroundColor = UIColor(red: 12.0/255, green: 12.0/255, blue: 12.0/255, alpha: 1)
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
         initializeKeyboard()
     }
     
@@ -137,6 +149,19 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     
     override func textDidChange(textInput: UITextInput) {
         // The app has just changed the document's contents, the document context has been updated.
+    }
+
+    override func touchesBegan(touches: NSSet!, withEvent event: UIEvent!) {
+        self.view.addSubview(swipeView)
+        swipeView.drawTouch(touches.anyObject() as UITouch)
+    }
+    
+    override func touchesMoved(touches: NSSet!, withEvent event: UIEvent!) {
+        swipeView.drawTouch(touches.anyObject() as UITouch)
+    }
+    
+    override func touchesEnded(touches: NSSet!, withEvent event: UIEvent!) {
+        swipeView.clear()
     }
     
     // MARK: Event handlers
@@ -319,8 +344,8 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     // MARK: SuggestionButtonDelegate
     
     func handlePressForButton(button: SuggestionButton) {
-        if let lastWordTyped = getLastWordTyped() {
-            for letter in lastWordTyped {
+        if let lastWord = lastWordTyped {
+            for letter in lastWord {
                 proxy.deleteBackward()
             }
             proxy.insertText(button.title + " ")
@@ -332,7 +357,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     
     // MARK: Helper methods
     
-    func initializeKeyboard() {
+    private func initializeKeyboard() {
         for subview in self.view.subviews as [UIView] {
             subview.removeFromSuperview() // Remove all buttons and gesture recognizers when view is recreated during orientation changes.
         }
@@ -345,23 +370,24 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
         addSpaceButton()
         addReturnButton()
         addCharacterButtons()
+        addSwipeView()
     }
     
-    func addPredictiveTextScrollView() {
+    private func addPredictiveTextScrollView() {
         predictiveTextScrollView = PredictiveTextScrollView(frame: CGRectMake(0.0, 0.0, self.view.frame.width, predictiveTextBoxHeight))
         self.view.addSubview(predictiveTextScrollView)
     }
     
-    func addShiftButton() {
+    private func addShiftButton() {
         shiftButton = KeyButton(frame: CGRectMake(spacing, keyHeight * 2.0 + spacing * 3.0 + predictiveTextBoxHeight, keyWidth * 1.5 + spacing * 0.5, keyHeight))
-        shiftButton.setTitle("\U000021E7", forState: .Normal)
+        shiftButton.setTitle("\u{000021E7}", forState: .Normal)
         shiftButton.addTarget(self, action: "shiftButtonPressed:", forControlEvents: .TouchUpInside)
         self.view.addSubview(shiftButton)
     }
     
-    func addDeleteButton() {
+    private func addDeleteButton() {
         deleteButton = KeyButton(frame: CGRectMake(keyWidth * 8.5 + spacing * 9.5, keyHeight * 2.0 + spacing * 3.0 + predictiveTextBoxHeight, keyWidth * 1.5, keyHeight))
-        deleteButton.setTitle("\U0000232B", forState: .Normal)
+        deleteButton.setTitle("\u{0000232B}", forState: .Normal)
         deleteButton.addTarget(self, action: "deleteButtonPressed:", forControlEvents: .TouchUpInside)
         self.view.addSubview(deleteButton)
         
@@ -373,21 +399,21 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
         deleteButton.addGestureRecognizer(deleteButtonSwipeLeftGestureRecognizer)
     }
     
-    func addTabButton() {
+    private func addTabButton() {
         tabButton = KeyButton(frame: CGRectMake(spacing, keyHeight * 3.0 + spacing * 4.0 + predictiveTextBoxHeight, keyWidth * 1.5 + spacing * 0.5, keyHeight))
         tabButton.setTitle("tab", forState: .Normal)
         tabButton.addTarget(self, action: "tabButtonPressed:", forControlEvents: .TouchUpInside)
         self.view.addSubview(tabButton)
     }
     
-    func addNextKeyboardButton() {
+    private func addNextKeyboardButton() {
         nextKeyboardButton = KeyButton(frame: CGRectMake(keyWidth * 1.5 + spacing * 2.5, keyHeight * 3.0 + spacing * 4.0 + predictiveTextBoxHeight, keyWidth, keyHeight))
-        nextKeyboardButton.setTitle("\U0001F310", forState: .Normal)
+        nextKeyboardButton.setTitle("\u{0001F310}", forState: .Normal)
         nextKeyboardButton.addTarget(self, action: "advanceToNextInputMode", forControlEvents: .TouchUpInside)
         self.view.addSubview(nextKeyboardButton)
     }
     
-    func addSpaceButton() {
+    private func addSpaceButton() {
         spaceButton = KeyButton(frame: CGRectMake(keyWidth * 2.5 + spacing * 3.5, keyHeight * 3.0 + spacing * 4.0 + predictiveTextBoxHeight, keyWidth * 5.0 + spacing * 4.0, keyHeight))
         spaceButton.addTarget(self, action: "spaceButtonPressed:", forControlEvents: .TouchUpInside)
         self.view.addSubview(spaceButton)
@@ -412,14 +438,14 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
         spaceButton.addGestureRecognizer(spaceButtonSwipeRightGestureRecognizer)
     }
     
-    func addReturnButton() {
+    private func addReturnButton() {
         returnButton = KeyButton(frame: CGRectMake(keyWidth * 7.5 + spacing * 8.5, keyHeight * 3.0 + spacing * 4.0 + predictiveTextBoxHeight, keyWidth * 2.5 + spacing, keyHeight))
-        returnButton.setTitle("\U000023CE", forState: .Normal)
+        returnButton.setTitle("\u{000023CE}", forState: .Normal)
         returnButton.addTarget(self, action: "returnButtonPressed:", forControlEvents: .TouchUpInside)
         self.view.addSubview(returnButton)
     }
     
-    func addCharacterButtons() {
+    private func addCharacterButtons() {
         characterButtons = [
             [],
             [],
@@ -447,8 +473,12 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
         }
     }
     
-    func moveButtonLabels(dx: CGFloat) {
-        for (rowIndex, row) in enumerate(self.characterButtons) {
+    private func addSwipeView() {
+        swipeView = SwipeView(containerView: self.view, topOffset: predictiveTextBoxHeight)
+    }
+    
+    private func moveButtonLabels(dx: CGFloat) {
+        for (rowIndex, row) in enumerate(characterButtons) {
             for (characterButtonIndex, characterButton) in enumerate(row) {
                 characterButton.secondaryLabel.frame.offset(dx: dx, dy: 0.0)
                 characterButton.tertiaryLabel.frame.offset(dx: dx, dy: 0.0)
@@ -457,15 +487,15 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
         currentLanguageLabel.frame.offset(dx: dx, dy: 0.0)
     }
     
-    func updateSuggestions() {
+    private func updateSuggestions() {
         for suggestionButton in suggestionButtons {
             suggestionButton.removeFromSuperview()
         }
         
         // TODO: Figure out an implementation that doesn't use bridgeToObjectiveC, in case of funny unicode characters.
-        if let lastWordTyped = getLastWordTyped() {
+        if let lastWord = lastWordTyped {
             var x = spacing
-            for suggestion in suggestionProvider.suggestionsForPrefix(lastWordTyped) {
+            for suggestion in suggestionProvider.suggestionsForPrefix(lastWord) {
                 let suggestionButton = SuggestionButton(frame: CGRectMake(x, 0.0, predictiveTextButtonWidth, predictiveTextBoxHeight), title: suggestion, delegate: self)
                 predictiveTextScrollView?.addSubview(suggestionButton)
                 suggestionButtons += suggestionButton
@@ -473,16 +503,5 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
             }
             predictiveTextScrollView!.contentSize = CGSizeMake(x, predictiveTextBoxHeight)
         }
-    }
-    
-    func getLastWordTyped() -> String? {
-        if let documentContextBeforeInput = proxy.documentContextBeforeInput?.bridgeToObjectiveC() {
-            let length = documentContextBeforeInput.length
-            if length > 0 && NSCharacterSet.letterCharacterSet().characterIsMember(documentContextBeforeInput.characterAtIndex(length - 1)) {
-                let components = documentContextBeforeInput.componentsSeparatedByCharactersInSet(NSCharacterSet.letterCharacterSet().invertedSet) as [String]
-                return components[components.endIndex - 1]
-            }
-        }
-        return nil
     }
 }

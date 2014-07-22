@@ -18,6 +18,7 @@ class SwiftLanguageProvider: LanguageProvider {
         ["if", "do", "@", "~", "+", "-", ":", "{", "}"],
         ["for", "switch", "*", "&", "(", ")", "\""]
     ]
+    
     var tertiaryCharacters = [
         ["var", "let", "#", "`", "%", "<", ">", "?", "!", "="],
         ["else", "while", "$", "^", "|", "_", ";", "[", "]"],

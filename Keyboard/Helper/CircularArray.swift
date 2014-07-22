@@ -15,9 +15,9 @@ class CircularArray<T> {
     
     // MARK: Properties
     
-    let items: [T]
+    private let items: [T]
     
-    var index = 0
+    private var index = 0
     
     var currentItem: T? {
         if items.count == 0 {

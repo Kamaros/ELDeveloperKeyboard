@@ -17,7 +17,7 @@ extension CALayer {
     */
     func UIImageFromCALayer() -> UIImage {
         UIGraphicsBeginImageContextWithOptions(self.frame.size, true, 0)
-        self.renderInContext(UIGraphicsGetCurrentContext())
+        renderInContext(UIGraphicsGetCurrentContext())
         let outputImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         return outputImage

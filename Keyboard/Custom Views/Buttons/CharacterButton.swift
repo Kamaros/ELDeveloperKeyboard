@@ -66,9 +66,9 @@ class CharacterButton: KeyButton {
         }
     }
     
-    var primaryLabel: UILabel!
-    var secondaryLabel: UILabel!
-    var tertiaryLabel: UILabel!
+    private(set) var primaryLabel: UILabel!
+    private(set) var secondaryLabel: UILabel!
+    private(set) var tertiaryLabel: UILabel!
     
     // MARK: Constructors
     
