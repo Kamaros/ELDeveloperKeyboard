@@ -52,7 +52,7 @@ class SuggestionButton: UIButton {
     
     // MARK: Event handlers
     
-    private func buttonPressed(button: SuggestionButton) {
+    func buttonPressed(button: SuggestionButton) {
         delegate?.handlePressForButton(self)
     }
 }

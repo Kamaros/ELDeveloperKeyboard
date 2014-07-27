@@ -12,17 +12,17 @@ import Foundation
  A default implementation of the @a LanguageProvider interface, representing no specific programming language. Secondary and tertiary characters match their respective positions on a standard QWERTY keyboard.
 */
 class DefaultLanguageProvider: LanguageProvider {
-    var language = "Default"
-    var secondaryCharacters = [
+    lazy var language = "Default"
+    lazy var secondaryCharacters = [
         ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")"],
         ["", "", "", "~", "{", "}", "|", "-", "+"],
         ["", "", "<", ">", "?", ":", "\""]
     ]
-    var tertiaryCharacters = [
+    lazy var tertiaryCharacters = [
         ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"],
         ["", "", "", "`", "[", "]", "\\", "_", "="],
         ["", "", ",", ".", "/", ";", "'"]
     ]
-    var autocapitalizeAfter = [String]()
-    var suggestionDictionary = [WeightedString]()
+    lazy var autocapitalizeAfter = [String]()
+    lazy var suggestionDictionary = [WeightedString]()
 }

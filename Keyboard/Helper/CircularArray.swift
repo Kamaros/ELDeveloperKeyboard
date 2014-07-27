@@ -6,19 +6,17 @@
 //  Copyright (c) 2014 Eric Lin. All rights reserved.
 //
 
-import Foundation
-
 /**
  A circular array that can be cycled through.
 */
 class CircularArray<T> {
     
     // MARK: Properties
-    
+        
     private let items: [T]
     
-    private var index = 0
-    
+    private lazy var index = 0
+        
     var currentItem: T? {
         if items.count == 0 {
             return nil
@@ -44,6 +42,15 @@ class CircularArray<T> {
     
     init(items: [T]) {
         self.items = items
+        
+        var strings = [String]()
+        
+        strings.sort({
+            (s1: String, s2: String) in
+            return s1 > s2
+            })
+        
+        strings.sort {$0 > $1}
     }
     
     // MARK: Methods

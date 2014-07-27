@@ -12,20 +12,20 @@ import Foundation
  An implementation of the @a LanguageProvider interface, targeted towards the Swift programming language.
 */
 class SwiftLanguageProvider: LanguageProvider {
-    var language = "Swift"
-    var secondaryCharacters = [
+    lazy var language = "Swift"
+    lazy var secondaryCharacters = [
         ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"],
         ["if", "do", "@", "~", "+", "-", ":", "{", "}"],
         ["for", "switch", "*", "&", "(", ")", "\""]
     ]
     
-    var tertiaryCharacters = [
+    lazy var tertiaryCharacters = [
         ["var", "let", "#", "`", "%", "<", ">", "?", "!", "="],
         ["else", "while", "$", "^", "|", "_", ";", "[", "]"],
         ["in", "case", "/", "\\", ",", ".", "'"]
     ]
-    var autocapitalizeAfter = ["class", "struct", "enum", "protocol", "extension", "import", "typealias", ":", "->"]
-    var suggestionDictionary = [
+    lazy var autocapitalizeAfter = ["class", "struct", "enum", "protocol", "extension", "import", "typealias", ":", "->"]
+    lazy var suggestionDictionary = [
         WeightedString(term: "self", weight: 133),
         WeightedString(term: "func", weight: 57),
         WeightedString(term: "var", weight: 49),

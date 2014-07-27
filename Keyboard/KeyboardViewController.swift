@@ -16,6 +16,12 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     
     // MARK: Constants
     
+    private var mutablePrimaryCharacters = [
+        ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
+        ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
+        ["z", "x", "c", "v", "b", "n", "m"]
+    ]
+
     private let primaryCharacters = [
         ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
         ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
@@ -44,7 +50,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     private var predictiveTextScrollView: PredictiveTextScrollView!
     private var suggestionButtons = [SuggestionButton]()
     
-    private var characterButtons: [[CharacterButton]] = [
+    private lazy var characterButtons: [[CharacterButton]] = [
         [],
         [],
         []
@@ -152,7 +158,6 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     }
 
     override func touchesBegan(touches: NSSet!, withEvent event: UIEvent!) {
-        self.view.addSubview(swipeView)
         swipeView.drawTouch(touches.anyObject() as UITouch)
     }
     
@@ -161,6 +166,10 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     }
     
     override func touchesEnded(touches: NSSet!, withEvent event: UIEvent!) {
+        swipeView.clear()
+    }
+    
+    override func touchesCancelled(touches: NSSet!, withEvent event: UIEvent!) {
         swipeView.clear()
     }
     
@@ -475,6 +484,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     
     private func addSwipeView() {
         swipeView = SwipeView(containerView: self.view, topOffset: predictiveTextBoxHeight)
+        self.view.addSubview(swipeView)
     }
     
     private func moveButtonLabels(dx: CGFloat) {

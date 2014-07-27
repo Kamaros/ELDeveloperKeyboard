@@ -20,8 +20,7 @@ class SwipeView: UIView {
     
     // MARK: Properties
     
-    private var topOffset: CGFloat
-    private var points = [CGPoint]()
+    private lazy var points = [CGPoint]()
     
     private var swipeLength: CGFloat {
         get {
@@ -43,7 +42,6 @@ class SwipeView: UIView {
     // MARK: Constructors
     
     init(containerView: UIView, topOffset: CGFloat) {
-        self.topOffset = topOffset
         super.init(frame: CGRectMake(0.0, topOffset, containerView.frame.width, containerView.frame.height - topOffset))
         self.opaque = false
         self.backgroundColor = UIColor.clearColor()
@@ -82,13 +80,13 @@ class SwipeView: UIView {
     // MARK: Methods
     
     func clear() {
-        self.removeFromSuperview()
         points.removeAll(keepCapacity: false)
+        self.setNeedsDisplay()
     }
     
     func drawTouch(touch: UITouch) {
-        let touchPoint = touch.locationInView(touch.view)
-        let point = CGPointMake(touchPoint.x, touchPoint.y - topOffset)
+        let touchPoint = touch.locationInView(self)
+        let point = CGPointMake(touchPoint.x, touchPoint.y)
         points += point
         while swipeLength > maxLength {
             points.removeAtIndex(0)
