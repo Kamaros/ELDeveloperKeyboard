@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		072711351967691600A896D1 /* SuggestionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 072711341967691600A896D1 /* SuggestionButton.swift */; };
 		0727113919684B4700A896D1 /* PredictiveTextScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0727113819684B4700A896D1 /* PredictiveTextScrollView.swift */; };
+		074DC95A197ACA22000B913B /* CGPointExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 074DC959197ACA22000B913B /* CGPointExtensions.swift */; };
 		076EF58E19650431009A561C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 076EF58D19650431009A561C /* AppDelegate.swift */; };
 		076EF59019650431009A561C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 076EF58F19650431009A561C /* Images.xcassets */; };
 		076EF5AA1965046D009A561C /* ELViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 076EF5A91965046D009A561C /* ELViewController.swift */; };
@@ -28,6 +29,8 @@
 		076EF5FD19650FB5009A561C /* SuggestionTrie.swift in Sources */ = {isa = PBXBuildFile; fileRef = 076EF5FC19650FB5009A561C /* SuggestionTrie.swift */; };
 		0786C55D1968A92500E4E410 /* iOS Simulator Screenshot.png in Resources */ = {isa = PBXBuildFile; fileRef = 0786C55C1968A92500E4E410 /* iOS Simulator Screenshot.png */; };
 		07D5B820196622350046B202 /* WeightedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D5B81F196622350046B202 /* WeightedString.swift */; };
+		07D7AE90198D9726006200DA /* TouchDelegatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D7AE8F198D9726006200DA /* TouchDelegatingView.swift */; };
+		07F6208A1979705D006C4C86 /* SwipeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07F620891979705D006C4C86 /* SwipeView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +67,7 @@
 /* Begin PBXFileReference section */
 		072711341967691600A896D1 /* SuggestionButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SuggestionButton.swift; sourceTree = "<group>"; };
 		0727113819684B4700A896D1 /* PredictiveTextScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PredictiveTextScrollView.swift; sourceTree = "<group>"; };
+		074DC959197ACA22000B913B /* CGPointExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CGPointExtensions.swift; sourceTree = "<group>"; };
 		076EF58819650431009A561C /* ELDeveloperKeyboard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ELDeveloperKeyboard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		076EF58C19650431009A561C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		076EF58D19650431009A561C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -86,6 +90,8 @@
 		076EF5FC19650FB5009A561C /* SuggestionTrie.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SuggestionTrie.swift; sourceTree = "<group>"; };
 		0786C55C1968A92500E4E410 /* iOS Simulator Screenshot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iOS Simulator Screenshot.png"; sourceTree = "<group>"; };
 		07D5B81F196622350046B202 /* WeightedString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeightedString.swift; sourceTree = "<group>"; };
+		07D7AE8F198D9726006200DA /* TouchDelegatingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TouchDelegatingView.swift; sourceTree = "<group>"; };
+		07F620891979705D006C4C86 /* SwipeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwipeView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,6 +117,8 @@
 			children = (
 				0727113719684AF800A896D1 /* Buttons */,
 				0727113819684B4700A896D1 /* PredictiveTextScrollView.swift */,
+				07F620891979705D006C4C86 /* SwipeView.swift */,
+				07D7AE8F198D9726006200DA /* TouchDelegatingView.swift */,
 			);
 			path = "Custom Views";
 			sourceTree = "<group>";
@@ -204,6 +212,7 @@
 			children = (
 				076EF5EA19650B93009A561C /* StringSubscripts.swift */,
 				076EF5EC19650BD3009A561C /* UIImageFromCALayer.swift */,
+				074DC959197ACA22000B913B /* CGPointExtensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -342,11 +351,14 @@
 				076EF5E6196506F0009A561C /* DefaultLanguageProvider.swift in Sources */,
 				0727113919684B4700A896D1 /* PredictiveTextScrollView.swift in Sources */,
 				076EF5ED19650BD3009A561C /* UIImageFromCALayer.swift in Sources */,
+				074DC95A197ACA22000B913B /* CGPointExtensions.swift in Sources */,
+				07D7AE90198D9726006200DA /* TouchDelegatingView.swift in Sources */,
 				07D5B820196622350046B202 /* WeightedString.swift in Sources */,
 				076EF5E819650727009A561C /* SwiftLanguageProvider.swift in Sources */,
 				076EF5FD19650FB5009A561C /* SuggestionTrie.swift in Sources */,
 				076EF5D91965061C009A561C /* KeyboardViewController.swift in Sources */,
 				076EF5F219650C79009A561C /* KeyButton.swift in Sources */,
+				07F6208A1979705D006C4C86 /* SwipeView.swift in Sources */,
 				076EF5F419650C90009A561C /* CharacterButton.swift in Sources */,
 				076EF5FB19650F24009A561C /* SuggestionProvider.swift in Sources */,
 			);
@@ -472,6 +484,7 @@
 		076EF5E01965061C009A561C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -481,12 +494,14 @@
 				METAL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "Eric-Lin.ELDeveloperKeyboard.$(TARGET_NAME:rfc1034identifier)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
 		076EF5E11965061C009A561C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = Keyboard/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				METAL_ENABLE_DEBUG_INFO = NO;

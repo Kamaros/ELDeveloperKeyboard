@@ -12,7 +12,7 @@ import UIKit
 /**
  An iOS custom keyboard extension written in Swift designed to make it much, much easier to type code on an iOS device.
 */
-class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, SuggestionButtonDelegate {
+class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, SuggestionButtonDelegate, TouchForwardingViewDelegate {
     
     // MARK: Constants
     
@@ -130,8 +130,9 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     
     // MARK: Overridden methods
     
-    override func updateViewConstraints() {
-        super.updateViewConstraints()
+    override func loadView() {
+        let screenRect = UIScreen.mainScreen().bounds
+        self.view = TouchForwardingView(frame: CGRectMake(0.0, 0.0, screenRect.width, screenRect.height), delegate: self)
     }
     
     override func viewDidLoad() {
@@ -143,34 +144,9 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
         super.viewDidAppear(animated)
         initializeKeyboard()
     }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated
-    }
-    
-    override func textWillChange(textInput: UITextInput) {
-        // The app is about to change the document's contents. Perform any preparation here.
-    }
-    
-    override func textDidChange(textInput: UITextInput) {
-        // The app has just changed the document's contents, the document context has been updated.
-    }
-
-    override func touchesBegan(touches: NSSet!, withEvent event: UIEvent!) {
-        swipeView.drawTouch(touches.anyObject() as UITouch)
-    }
-    
-    override func touchesMoved(touches: NSSet!, withEvent event: UIEvent!) {
-        swipeView.drawTouch(touches.anyObject() as UITouch)
-    }
-    
-    override func touchesEnded(touches: NSSet!, withEvent event: UIEvent!) {
-        swipeView.clear()
-    }
-    
-    override func touchesCancelled(touches: NSSet!, withEvent event: UIEvent!) {
-        swipeView.clear()
+        
+    override func didRotateFromInterfaceOrientation(fromInterfaceOrientation: UIInterfaceOrientation) {
+        initializeKeyboard()
     }
     
     // MARK: Event handlers
@@ -362,6 +338,19 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
                 suggestionButton.removeFromSuperview()
             }
         }
+    }
+    
+    // MARK: TouchForwardingViewDelegate
+    
+    // TODO: Get this method to properly provide the desired behaviour.
+    func viewForHitTestWithPoint(point: CGPoint, event: UIEvent, superResult: UIView) -> UIView {
+        for subview in view.subviews as [UIView] {
+            let convertPoint = subview.convertPoint(point, fromView: view)
+            if subview.pointInside(convertPoint, withEvent: event) {
+                return subview
+            }
+        }
+        return superResult
     }
     
     // MARK: Helper methods

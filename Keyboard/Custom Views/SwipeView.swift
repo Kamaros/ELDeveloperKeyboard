@@ -45,7 +45,7 @@ class SwipeView: UIView {
         super.init(frame: CGRectMake(0.0, topOffset, containerView.frame.width, containerView.frame.height - topOffset))
         self.opaque = false
         self.backgroundColor = UIColor.clearColor()
-        self.userInteractionEnabled = false
+        self.userInteractionEnabled = true
     }
     
     // MARK: Overridden methods
@@ -92,5 +92,21 @@ class SwipeView: UIView {
             points.removeAtIndex(0)
         }
         self.setNeedsDisplay()
+    }
+    
+    override func touchesBegan(touches: NSSet!, withEvent event: UIEvent!) {
+        drawTouch(touches.anyObject() as UITouch)
+    }
+    
+    override func touchesMoved(touches: NSSet!, withEvent event: UIEvent!) {
+        drawTouch(touches.anyObject() as UITouch)
+    }
+    
+    override func touchesEnded(touches: NSSet!, withEvent event: UIEvent!) {
+        clear()
+    }
+    
+    override func touchesCancelled(touches: NSSet!, withEvent event: UIEvent!) {
+        clear()
     }
 }

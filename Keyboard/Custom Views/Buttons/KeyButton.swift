@@ -14,6 +14,9 @@ import QuartzCore
  @a KeyButton is a @a UIButton subclass with keyboard button styling.
 */
 class KeyButton: UIButton {
+    
+    // MARK: Constructors
+    
     init(frame: CGRect) {
         super.init(frame: frame)
         
