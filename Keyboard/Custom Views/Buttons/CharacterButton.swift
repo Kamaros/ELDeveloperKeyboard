@@ -12,7 +12,7 @@ import UIKit
 /**
  The methods declared in the @a CharacterButtonDelegate protocol allow the adopting delegate to respond to messages from the @a CharacterButton class, handling button presses and swipes.
 */
-protocol CharacterButtonDelegate {
+protocol CharacterButtonDelegate: class {
     /**
      Respond to the @a CharacterButton being pressed.
      @param button 
@@ -42,7 +42,7 @@ class CharacterButton: KeyButton {
     
     // MARK: Properties
     
-    var delegate: CharacterButtonDelegate?
+    weak var delegate: CharacterButtonDelegate?
     
     var primaryCharacter: String {
         didSet {

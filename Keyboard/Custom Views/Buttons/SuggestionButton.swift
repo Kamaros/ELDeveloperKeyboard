@@ -12,7 +12,7 @@ import UIKit
 /**
  The method declared in the @a SuggestionButtonDelegate protocol allow the adopting delegate to respond to messages from the @a SuggestionButton class, handling button presses.
 */
-protocol SuggestionButtonDelegate {
+protocol SuggestionButtonDelegate: class {
     /**
      Respond to the @a SuggestionButton being pressed.
      @param button
@@ -25,7 +25,7 @@ class SuggestionButton: UIButton {
     
     // MARK: Properties
     
-    var delegate: SuggestionButtonDelegate?
+    weak var delegate: SuggestionButtonDelegate?
     
     var title: String {
         didSet {
