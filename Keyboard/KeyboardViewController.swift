@@ -22,9 +22,9 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
         ["z", "x", "c", "v", "b", "n", "m"]
     ]
     
-//    private let suggestionProvider: SuggestionProvider = SuggestionTrie()
-//    
-//    private let languageProviders = CircularArray(items: [DefaultLanguageProvider(), SwiftLanguageProvider()] as [LanguageProvider])
+    private let suggestionProvider: SuggestionProvider = SuggestionTrie()
+    
+    private let languageProviders = CircularArray(items: [DefaultLanguageProvider(), SwiftLanguageProvider()] as [LanguageProvider])
     
     private let spacing: CGFloat = 4.0
     private let predictiveTextBoxHeight: CGFloat = 24.0
@@ -40,9 +40,9 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     
     // MARK: Interface
     
-//    private var swipeView: SwipeView!
-//    private var predictiveTextScrollView: PredictiveTextScrollView!
-//    private var suggestionButtons = [SuggestionButton]()
+    private var swipeView: SwipeView!
+    private var predictiveTextScrollView: PredictiveTextScrollView!
+    private var suggestionButtons = [SuggestionButton]()
     
     private lazy var characterButtons: [[CharacterButton]] = [
         [],
@@ -332,9 +332,9 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
                 proxy.deleteBackward()
             }
             proxy.insertText(button.title + " ")
-//            for suggestionButton in suggestionButtons {
-//                suggestionButton.removeFromSuperview()
-//            }
+            for suggestionButton in suggestionButtons {
+                suggestionButton.removeFromSuperview()
+            }
         }
     }
     
@@ -370,8 +370,8 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     }
     
     private func addPredictiveTextScrollView() {
-//        predictiveTextScrollView = PredictiveTextScrollView(frame: CGRectMake(0.0, 0.0, self.view.frame.width, predictiveTextBoxHeight))
-//        self.view.addSubview(predictiveTextScrollView)
+        predictiveTextScrollView = PredictiveTextScrollView(frame: CGRectMake(0.0, 0.0, self.view.frame.width, predictiveTextBoxHeight))
+        self.view.addSubview(predictiveTextScrollView)
     }
     
     private func addShiftButton() {
@@ -471,8 +471,8 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     }
     
     private func addSwipeView() {
-//        swipeView = SwipeView(containerView: self.view, topOffset: predictiveTextBoxHeight)
-//        self.view.addSubview(swipeView)
+        swipeView = SwipeView(containerView: self.view, topOffset: predictiveTextBoxHeight)
+        self.view.addSubview(swipeView)
     }
     
     private func moveButtonLabels(dx: CGFloat) {
@@ -486,20 +486,20 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     }
     
     private func updateSuggestions() {
-//        for suggestionButton in suggestionButtons {
-//            suggestionButton.removeFromSuperview()
-//        }
-//        
-//        // TODO: Figure out an implementation that doesn't use bridgeToObjectiveC, in case of funny unicode characters.
-//        if let lastWord = lastWordTyped {
-//            var x = spacing
+        for suggestionButton in suggestionButtons {
+            suggestionButton.removeFromSuperview()
+        }
+        
+        // TODO: Figure out an implementation that doesn't use bridgeToObjectiveC, in case of funny unicode characters.
+        if let lastWord = lastWordTyped {
+            var x = spacing
 //            for suggestion in suggestionProvider.suggestionsForPrefix(lastWord) {
 //                let suggestionButton = SuggestionButton(frame: CGRectMake(x, 0.0, predictiveTextButtonWidth, predictiveTextBoxHeight), title: suggestion, delegate: self)
 //                predictiveTextScrollView?.addSubview(suggestionButton)
 //                suggestionButtons.append(suggestionButton)
 //                x += predictiveTextButtonWidth + spacing
 //            }
-//            predictiveTextScrollView!.contentSize = CGSizeMake(x, predictiveTextBoxHeight)
-//        }
+            predictiveTextScrollView!.contentSize = CGSizeMake(x, predictiveTextBoxHeight)
+        }
     }
 }

@@ -45,7 +45,7 @@ class SwipeView: UIView {
         super.init(frame: CGRectMake(0.0, topOffset, containerView.frame.width, containerView.frame.height - topOffset))
         self.opaque = false
         self.backgroundColor = UIColor.clearColor()
-        self.userInteractionEnabled = true
+        self.userInteractionEnabled = false
     }
 
     required init(coder: NSCoder) {
