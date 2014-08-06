@@ -16,10 +16,14 @@ class PredictiveTextScrollView: UIScrollView {
     
     // MARK: Constructors
     
-    init(frame: CGRect) {
+    override init(frame: CGRect) {
         super.init(frame: frame)
         self.canCancelContentTouches = true
         self.delaysContentTouches = false
+    }
+    
+    required init(coder: NSCoder) {
+        fatalError("NSCoding not supported")
     }
     
     // MARK: Overridden methods

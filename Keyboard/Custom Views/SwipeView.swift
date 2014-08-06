@@ -47,6 +47,10 @@ class SwipeView: UIView {
         self.backgroundColor = UIColor.clearColor()
         self.userInteractionEnabled = true
     }
+
+    required init(coder: NSCoder) {
+        fatalError("NSCoding not supported")
+    }
     
     // MARK: Overridden methods
     
@@ -87,7 +91,7 @@ class SwipeView: UIView {
     func drawTouch(touch: UITouch) {
         let touchPoint = touch.locationInView(self)
         let point = CGPointMake(touchPoint.x, touchPoint.y)
-        points += point
+        points.append(point)
         while swipeLength > maxLength {
             points.removeAtIndex(0)
         }

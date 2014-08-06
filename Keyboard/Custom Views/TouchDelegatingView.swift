@@ -24,7 +24,7 @@ protocol TouchForwardingViewDelegate {
             The @a UIView returned by the call to @a super.
      @return A @a UIView that the delegate decides should receive the touch event.
     */
-    func viewForHitTestWithPoint(point: CGPoint, event: UIEvent, superResult: UIView) -> UIView
+    func viewForHitTestWithPoint(point: CGPoint, event: UIEvent?, superResult: UIView?) -> UIView?
 }
 
 class TouchForwardingView: UIView {
@@ -40,9 +40,13 @@ class TouchForwardingView: UIView {
         super.init(frame: frame)
     }
     
+    required init(coder: NSCoder) {
+        fatalError("NSCoding not supported")
+    }
+    
     // MARK: Overridden methods
     
-    override func hitTest(point: CGPoint, withEvent event: UIEvent) -> UIView {
+    override func hitTest(point: CGPoint, withEvent event: UIEvent?) -> UIView? {
         let result = super.hitTest(point, withEvent: event)
         if let unwrappedDelegate = delegate {
             return unwrappedDelegate.viewForHitTestWithPoint(point, event: event, superResult: result)

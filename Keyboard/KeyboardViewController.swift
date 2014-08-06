@@ -13,7 +13,7 @@ import UIKit
  An iOS custom keyboard extension written in Swift designed to make it much, much easier to type code on an iOS device.
 */
 class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, SuggestionButtonDelegate, TouchForwardingViewDelegate {
-    
+
     // MARK: Constants
     
     private var mutablePrimaryCharacters = [
@@ -21,7 +21,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
         ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
         ["z", "x", "c", "v", "b", "n", "m"]
     ]
-
+    
     private let primaryCharacters = [
         ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
         ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
@@ -62,7 +62,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     private var spaceButton: KeyButton!
     private var returnButton: KeyButton!
     private var currentLanguageLabel: UILabel!
-    
+
     // MARK: Timers
     
     private var deleteButtonTimer: NSTimer?
@@ -75,7 +75,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     }
     
     private var lastWordTyped: String? {
-        if let documentContextBeforeInput = proxy.documentContextBeforeInput?.bridgeToObjectiveC() {
+        if let documentContextBeforeInput = proxy.documentContextBeforeInput as NSString? {
             let length = documentContextBeforeInput.length
             if length > 0 && NSCharacterSet.letterCharacterSet().characterIsMember(documentContextBeforeInput.characterAtIndex(length - 1)) {
                 let components = documentContextBeforeInput.componentsSeparatedByCharactersInSet(NSCharacterSet.letterCharacterSet().invertedSet) as [String]
@@ -84,7 +84,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
         }
         return nil
     }
-    
+
     private var languageProvider: LanguageProvider {
         didSet {
             for (rowIndex, row) in enumerate(characterButtons) {
@@ -98,7 +98,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
             suggestionProvider.loadWeightedStrings(languageProvider.suggestionDictionary)
         }
     }
-    
+
     private enum ShiftMode {
         case Off, On, Caps
     }
@@ -122,17 +122,22 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     
     // MARK: Constructors
     
-    init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
         self.shiftMode = .Off
         self.languageProvider = languageProviders.currentItem!
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+    }
+
+    required init(coder: NSCoder) {
+        fatalError("NSCoding not supported")
     }
     
     // MARK: Overridden methods
     
     override func loadView() {
+        self.languageProvider = languageProviders.currentItem!
         let screenRect = UIScreen.mainScreen().bounds
-        self.view = TouchForwardingView(frame: CGRectMake(0.0, 0.0, screenRect.width, screenRect.height), delegate: self)
+        self.view = TouchForwardingView(frame: CGRectMake(0.0, predictiveTextBoxHeight, screenRect.width, screenRect.height - predictiveTextBoxHeight), delegate: self)
     }
     
     override func viewDidLoad() {
@@ -177,7 +182,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     func handleLongPressForDeleteButtonWithGestureRecognizer(gestureRecognizer: UILongPressGestureRecognizer) {
         switch gestureRecognizer.state {
         case .Began:
-            if !deleteButtonTimer {
+            if deleteButtonTimer == nil {
                 deleteButtonTimer = NSTimer(timeInterval: 0.1, target: self, selector: "handleDeleteButtonTimerTick:", userInfo: nil, repeats: true)
                 deleteButtonTimer!.tolerance = 0.01
                 NSRunLoop.mainRunLoop().addTimer(deleteButtonTimer, forMode: NSDefaultRunLoopMode)
@@ -191,7 +196,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     
     func handleSwipeLeftForDeleteButtonWithGestureRecognizer(gestureRecognizer: UISwipeGestureRecognizer) {
         // TODO: Figure out an implementation that doesn't use bridgeToObjectiveC, in case of funny unicode characters.
-        if let documentContextBeforeInput = proxy.documentContextBeforeInput?.bridgeToObjectiveC() {
+        if let documentContextBeforeInput = proxy.documentContextBeforeInput as NSString? {
             if documentContextBeforeInput.length > 0 {
                 var charactersToDelete = 0
                 switch documentContextBeforeInput {
@@ -244,7 +249,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     func handleLongPressForSpaceButtonWithGestureRecognizer(gestureRecognizer: UISwipeGestureRecognizer) {
         switch gestureRecognizer.state {
         case .Began:
-            if !spaceButtonTimer {
+            if spaceButtonTimer == nil {
                 spaceButtonTimer = NSTimer(timeInterval: 0.1, target: self, selector: "handleSpaceButtonTimerTick:", userInfo: nil, repeats: true)
                 spaceButtonTimer!.tolerance = 0.01
                 NSRunLoop.mainRunLoop().addTimer(spaceButtonTimer, forMode: NSDefaultRunLoopMode)
@@ -343,11 +348,11 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     // MARK: TouchForwardingViewDelegate
     
     // TODO: Get this method to properly provide the desired behaviour.
-    func viewForHitTestWithPoint(point: CGPoint, event: UIEvent, superResult: UIView) -> UIView {
+    func viewForHitTestWithPoint(point: CGPoint, event: UIEvent?, superResult: UIView?) -> UIView? {
         for subview in view.subviews as [UIView] {
             let convertPoint = subview.convertPoint(point, fromView: view)
-            if subview.pointInside(convertPoint, withEvent: event) {
-                return subview
+            if subview is KeyButton && subview.pointInside(convertPoint, withEvent: event) {
+                //return subview
             }
         }
         return superResult
@@ -464,7 +469,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
             for (keyIndex, key) in enumerate(row) {
                 let characterButton = CharacterButton(frame: CGRectMake(x, y, keyWidth, keyHeight), primaryCharacter: key, secondaryCharacter: languageProvider.secondaryCharacters[rowIndex][keyIndex], tertiaryCharacter: languageProvider.tertiaryCharacters[rowIndex][keyIndex], delegate: self)
                 self.view.addSubview(characterButton)
-                characterButtons[rowIndex] += characterButton
+                characterButtons[rowIndex].append(characterButton)
                 x += keyWidth + spacing
             }
             y += keyHeight + spacing
@@ -497,7 +502,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
             for suggestion in suggestionProvider.suggestionsForPrefix(lastWord) {
                 let suggestionButton = SuggestionButton(frame: CGRectMake(x, 0.0, predictiveTextButtonWidth, predictiveTextBoxHeight), title: suggestion, delegate: self)
                 predictiveTextScrollView?.addSubview(suggestionButton)
-                suggestionButtons += suggestionButton
+                suggestionButtons.append(suggestionButton)
                 x += predictiveTextButtonWidth + spacing
             }
             predictiveTextScrollView!.contentSize = CGSizeMake(x, predictiveTextBoxHeight)

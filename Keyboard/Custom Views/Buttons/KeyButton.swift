@@ -17,7 +17,7 @@ class KeyButton: UIButton {
     
     // MARK: Constructors
     
-    init(frame: CGRect) {
+    override init(frame: CGRect) {
         super.init(frame: frame)
         
         self.titleLabel.font = UIFont(name: "HelveticaNeue", size: 18.0)
@@ -43,5 +43,9 @@ class KeyButton: UIButton {
         self.contentVerticalAlignment = .Center
         self.contentHorizontalAlignment = .Center
         self.contentEdgeInsets = UIEdgeInsets(top: 0, left: 1, bottom: 0, right: 0)
+    }
+    
+    required init(coder: NSCoder) {
+        fatalError("NSCoding not supported")
     }
 }

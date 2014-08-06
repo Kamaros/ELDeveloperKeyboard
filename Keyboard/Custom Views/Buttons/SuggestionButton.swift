@@ -50,6 +50,10 @@ class SuggestionButton: UIButton {
         self.addTarget(self, action: "buttonPressed:", forControlEvents: .TouchUpInside)
     }
     
+    required init(coder: NSCoder) {
+        fatalError("NSCoding not supported")
+    }
+    
     // MARK: Event handlers
     
     func buttonPressed(button: SuggestionButton) {

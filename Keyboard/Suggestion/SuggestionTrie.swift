@@ -30,7 +30,7 @@ class SuggestionTrie: SuggestionProvider {
             weightedSuggestions.sort() { $0.weight >= $1.weight }
             var suggestions = [String]()
             for suggestion in weightedSuggestions {
-                suggestions += suggestion.term
+                suggestions.append(suggestion.term)
             }
             return suggestions
         }
@@ -61,7 +61,7 @@ class SuggestionTrie: SuggestionProvider {
     private func insertString(s: String, charIndex: Int, weight: Int, inout node: SuggestionNode?) {
         let count = countElements(s)
         if count > 0 {
-            if !node {
+            if node == nil {
                 if count == charIndex + 1 {
                     node = SuggestionNode(term: s, weight: weight)
                 } else {
@@ -81,7 +81,7 @@ class SuggestionTrie: SuggestionProvider {
     
     private func searchForNodeMatchingPrefix(prefix: String, rootNode: SuggestionNode?) -> SuggestionNode? {
         let count = countElements(prefix)
-        if !rootNode || count == 0 {
+        if rootNode == nil || count == 0 {
             return nil
         } else if count == 1 && prefix == rootNode!.char {
             return rootNode
@@ -99,7 +99,7 @@ class SuggestionTrie: SuggestionProvider {
     private func findSuggestionsForNode(node: SuggestionNode?, inout suggestions: [WeightedString]) {
         if let n = node {
             if n.isWordEnd {
-                suggestions += WeightedString(term: n.term, weight: n.weight)
+                suggestions.append(WeightedString(term: n.term, weight: n.weight))
             }
             
             findSuggestionsForNode(n.loKid, suggestions: &suggestions)
