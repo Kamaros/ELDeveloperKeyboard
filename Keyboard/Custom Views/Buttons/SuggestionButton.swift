@@ -10,13 +10,13 @@ import Foundation
 import UIKit
 
 /**
- The method declared in the @a SuggestionButtonDelegate protocol allow the adopting delegate to respond to messages from the @a SuggestionButton class, handling button presses.
+    The method declared in the SuggestionButtonDelegate protocol allow the adopting delegate to respond to messages from the SuggestionButton class, handling button presses.
 */
-protocol SuggestionButtonDelegate {
+protocol SuggestionButtonDelegate { // FIXME: Need to change this to SuggestionButtonDelegate: class and make delegate property weak after bug is fixed.
     /**
-     Respond to the @a SuggestionButton being pressed.
-     @param button
-            The @a SuggestionButton that was pressed.
+        Respond to the SuggestionButton being pressed.
+    
+        :param: button The SuggestionButton that was pressed.
     */
     func handlePressForButton(button: SuggestionButton)
 }
@@ -48,6 +48,10 @@ class SuggestionButton: UIButton {
         self.setTitleColor(UIColor(red: 119.0/255, green: 198.0/255, blue: 237.0/255, alpha: 1.0), forState: .Highlighted)
         self.titleLabel.sizeToFit()
         self.addTarget(self, action: "buttonPressed:", forControlEvents: .TouchUpInside)
+    }
+    
+    required init(coder aDecoder: NSCoder!) {
+        fatalError("NSCoding not supported")
     }
     
     // MARK: Event handlers

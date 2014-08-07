@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 /**
- A subclass of UIView that takes points and draws them to the screen.
+    A subclass of UIView that takes points and draws them to the screen.
 */
 class SwipeView: UIView {
     
@@ -45,7 +45,11 @@ class SwipeView: UIView {
         super.init(frame: CGRectMake(0.0, topOffset, containerView.frame.width, containerView.frame.height - topOffset))
         self.opaque = false
         self.backgroundColor = UIColor.clearColor()
-        self.userInteractionEnabled = true
+        self.userInteractionEnabled = false
+    }
+
+    required init(coder aDecoder: NSCoder!) {
+        fatalError("NSCoding not supported")
     }
     
     // MARK: Overridden methods
@@ -87,7 +91,7 @@ class SwipeView: UIView {
     func drawTouch(touch: UITouch) {
         let touchPoint = touch.locationInView(self)
         let point = CGPointMake(touchPoint.x, touchPoint.y)
-        points += point
+        points.append(point)
         while swipeLength > maxLength {
             points.removeAtIndex(0)
         }

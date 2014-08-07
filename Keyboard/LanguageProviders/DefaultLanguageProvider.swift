@@ -9,7 +9,7 @@
 import Foundation
 
 /**
- A default implementation of the @a LanguageProvider interface, representing no specific programming language. Secondary and tertiary characters match their respective positions on a standard QWERTY keyboard.
+    A default implementation of the LanguageProvider interface, representing no specific programming language. Secondary and tertiary characters match their respective positions on a standard QWERTY keyboard.
 */
 class DefaultLanguageProvider: LanguageProvider {
     lazy var language = "Default"

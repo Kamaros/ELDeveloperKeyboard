@@ -9,7 +9,7 @@
 import Foundation
 
 /**
- An implementation of the @a SuggestionProvider protocol that uses a ternary search tree (trie) to store and search for terms.
+    An implementation of the SuggestionProvider protocol that uses a ternary search tree (trie) to store and search for terms.
 */
 class SuggestionTrie: SuggestionProvider {
     
@@ -30,7 +30,7 @@ class SuggestionTrie: SuggestionProvider {
             weightedSuggestions.sort() { $0.weight >= $1.weight }
             var suggestions = [String]()
             for suggestion in weightedSuggestions {
-                suggestions += suggestion.term
+                suggestions.append(suggestion.term)
             }
             return suggestions
         }
@@ -61,7 +61,7 @@ class SuggestionTrie: SuggestionProvider {
     private func insertString(s: String, charIndex: Int, weight: Int, inout node: SuggestionNode?) {
         let count = countElements(s)
         if count > 0 {
-            if !node {
+            if node == nil {
                 if count == charIndex + 1 {
                     node = SuggestionNode(term: s, weight: weight)
                 } else {
@@ -81,7 +81,7 @@ class SuggestionTrie: SuggestionProvider {
     
     private func searchForNodeMatchingPrefix(prefix: String, rootNode: SuggestionNode?) -> SuggestionNode? {
         let count = countElements(prefix)
-        if !rootNode || count == 0 {
+        if rootNode == nil || count == 0 {
             return nil
         } else if count == 1 && prefix == rootNode!.char {
             return rootNode
@@ -99,7 +99,7 @@ class SuggestionTrie: SuggestionProvider {
     private func findSuggestionsForNode(node: SuggestionNode?, inout suggestions: [WeightedString]) {
         if let n = node {
             if n.isWordEnd {
-                suggestions += WeightedString(term: n.term, weight: n.weight)
+                suggestions.append(WeightedString(term: n.term, weight: n.weight))
             }
             
             findSuggestionsForNode(n.loKid, suggestions: &suggestions)
@@ -118,7 +118,7 @@ class SuggestionTrie: SuggestionProvider {
     }
     
     /**
-     A @a SuggestionTrie node, representing a term.
+        A SuggestionTrie node, representing a term.
     */
     private class SuggestionNode {
         

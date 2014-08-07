@@ -9,7 +9,7 @@
 import Foundation
 
 /**
- A String extension that allows accessing substrings using subscript syntax.
+    A String extension that allows accessing substrings using subscript syntax.
 */
 extension String {
     subscript(i: Int) -> String {

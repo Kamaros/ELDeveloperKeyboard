@@ -10,16 +10,20 @@ import Foundation
 import UIKIt
 
 /**
- @a PredictiveTextScrollView is a subclass of @a UIScrollView designed to contain a number of @a UIButton subviews.
+    PredictiveTextScrollView is a subclass of UIScrollView designed to contain a number of UIButton subviews, cancelling their touches to allow scrolling behaviour.
 */
 class PredictiveTextScrollView: UIScrollView {
     
     // MARK: Constructors
     
-    init(frame: CGRect) {
+    override init(frame: CGRect) {
         super.init(frame: frame)
         self.canCancelContentTouches = true
         self.delaysContentTouches = false
+    }
+    
+    required init(coder aDecoder: NSCoder!) {
+        fatalError("NSCoding not supported")
     }
     
     // MARK: Overridden methods
