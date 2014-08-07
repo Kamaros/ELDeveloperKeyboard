@@ -9,7 +9,7 @@
 import Foundation
 
 /**
- An implementation of the @a SuggestionProvider protocol that uses a ternary search tree (trie) to store and search for terms.
+    An implementation of the SuggestionProvider protocol that uses a ternary search tree (trie) to store and search for terms.
 */
 class SuggestionTrie: SuggestionProvider {
     
@@ -118,7 +118,7 @@ class SuggestionTrie: SuggestionProvider {
     }
     
     /**
-     A @a SuggestionTrie node, representing a term.
+        A SuggestionTrie node, representing a term.
     */
     private class SuggestionNode {
         

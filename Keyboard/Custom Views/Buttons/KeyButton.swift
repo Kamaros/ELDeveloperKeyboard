@@ -11,7 +11,7 @@ import UIKit
 import QuartzCore
 
 /**
- @a KeyButton is a @a UIButton subclass with keyboard button styling.
+    KeyButton is a UIButton subclass with keyboard button styling.
 */
 class KeyButton: UIButton {
     
@@ -45,7 +45,7 @@ class KeyButton: UIButton {
         self.contentEdgeInsets = UIEdgeInsets(top: 0, left: 1, bottom: 0, right: 0)
     }
     
-    required init(coder: NSCoder) {
+    required init(coder aDecoder: NSCoder!) {
         fatalError("NSCoding not supported")
     }
 }

@@ -9,7 +9,7 @@
 import Foundation
 
 /**
- An implementation of the @a LanguageProvider interface, targeted towards the Swift programming language.
+    An implementation of the LanguageProvider interface, targeted towards the Swift programming language.
 */
 class SwiftLanguageProvider: LanguageProvider {
     lazy var language = "Swift"

@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 /**
- A subclass of UIView that takes points and draws them to the screen.
+    A subclass of UIView that takes points and draws them to the screen.
 */
 class SwipeView: UIView {
     
@@ -48,7 +48,7 @@ class SwipeView: UIView {
         self.userInteractionEnabled = false
     }
 
-    required init(coder: NSCoder) {
+    required init(coder aDecoder: NSCoder!) {
         fatalError("NSCoding not supported")
     }
     

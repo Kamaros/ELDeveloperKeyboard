@@ -10,19 +10,18 @@ import Foundation
 import UIKit
 
 /**
- The methods declared in the @a TouchForwardingViewDelegate protocol allow the adopting delegate to respond to override the behaviour of @a hitTest:withEvent: for the @a TouchForwardingView class.
+    The methods declared in the TouchForwardingViewDelegate protocol allow the adopting delegate to respond to override the behaviour of hitTest:withEvent: for the TouchForwardingView class.
 */
-protocol TouchForwardingViewDelegate: class {
+protocol TouchForwardingViewDelegate { // FIXME: Need to change this to TouchForwardingViewDelegate: class and make delegate property weak after bug is fixed.
     
     /**
-     Allows the delegate to override the behaviour of @a hitTest:withEvent: for this view.
-     @param point 
-            The @a CGPoint that was touched.
-     @param event 
-            The touch event.
-     @param superResult 
-            The @a UIView returned by the call to @a super.
-     @return A @a UIView that the delegate decides should receive the touch event.
+        Allows the delegate to override the behaviour of hitTest:withEvent: for this view.
+     
+        :param: point The CGPoint that was touched.
+        :param: event The touch event.
+        :param: superResult The UIView returned by the call to super.
+    
+        :returns: A UIView that the delegate decides should receive the touch event.
     */
     func viewForHitTestWithPoint(point: CGPoint, event: UIEvent?, superResult: UIView?) -> UIView?
 }
@@ -31,7 +30,7 @@ class TouchForwardingView: UIView {
     
     // MARK: Properties
     
-    weak var delegate: TouchForwardingViewDelegate?
+    var delegate: TouchForwardingViewDelegate?
     
     // MARK: Constructors
     
@@ -40,7 +39,7 @@ class TouchForwardingView: UIView {
         super.init(frame: frame)
     }
     
-    required init(coder: NSCoder) {
+    required init(coder aDecoder: NSCoder!) {
         fatalError("NSCoding not supported")
     }
     

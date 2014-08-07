@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 /**
- An iOS custom keyboard extension written in Swift designed to make it much, much easier to type code on an iOS device.
+    An iOS custom keyboard extension written in Swift designed to make it much, much easier to type code on an iOS device.
 */
 class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, SuggestionButtonDelegate, TouchForwardingViewDelegate {
 
@@ -79,50 +79,50 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
         return nil
     }
 
-//    private var languageProvider: LanguageProvider {
-//        didSet {
-//            for (rowIndex, row) in enumerate(characterButtons) {
-//                for (characterButtonIndex, characterButton) in enumerate(row) {
-//                    characterButton.secondaryCharacter = languageProvider.secondaryCharacters[rowIndex][characterButtonIndex]
-//                    characterButton.tertiaryCharacter = languageProvider.tertiaryCharacters[rowIndex][characterButtonIndex]
-//                }
-//            }
-//            currentLanguageLabel.text = languageProvider.language
-//            suggestionProvider.clear()
-//            suggestionProvider.loadWeightedStrings(languageProvider.suggestionDictionary)
-//        }
-//    }
+    private var languageProvider: LanguageProvider = DefaultLanguageProvider() {
+        didSet {
+            for (rowIndex, row) in enumerate(characterButtons) {
+                for (characterButtonIndex, characterButton) in enumerate(row) {
+                    characterButton.secondaryCharacter = languageProvider.secondaryCharacters[rowIndex][characterButtonIndex]
+                    characterButton.tertiaryCharacter = languageProvider.tertiaryCharacters[rowIndex][characterButtonIndex]
+                }
+            }
+            currentLanguageLabel.text = languageProvider.language
+            suggestionProvider.clear()
+            suggestionProvider.loadWeightedStrings(languageProvider.suggestionDictionary)
+        }
+    }
 
-//    private enum ShiftMode {
-//        case Off, On, Caps
-//    }
-//    
-//    private var shiftMode: ShiftMode {
-//        didSet {
-//            shiftButton.selected = (shiftMode == .Caps)
-//            for row in characterButtons {
-//                for characterButton in row {
-//                    switch shiftMode {
-//                    case .Off:
-//                        characterButton.primaryLabel.text = characterButton.primaryCharacter.lowercaseString
-//                    case .On, .Caps:
-//                        characterButton.primaryLabel.text = characterButton.primaryCharacter.uppercaseString
-//                    }
-//                
-//                }
-//            }
-//        }
-//    }
+    private enum ShiftMode {
+        case Off, On, Caps
+    }
+    
+    private var shiftMode: ShiftMode = .Off {
+        didSet {
+            shiftButton.selected = (shiftMode == .Caps)
+            for row in characterButtons {
+                for characterButton in row {
+                    switch shiftMode {
+                    case .Off:
+                        characterButton.primaryLabel.text = characterButton.primaryCharacter.lowercaseString
+                    case .On, .Caps:
+                        characterButton.primaryLabel.text = characterButton.primaryCharacter.uppercaseString
+                    }
+                
+                }
+            }
+        }
+    }
     
     // MARK: Constructors
-    
+    // FIXME: Uncomment init methods when crash bug is fixed. Also need to move languageProvider initialization to constructor to prevent unnecessary creation of two DefaultLanguageProvider instances.
 //    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
 //        self.shiftMode = .Off
 //        self.languageProvider = languageProviders.currentItem!
 //        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
 //    }
 
-//    required init(coder: NSCoder) {
+//    required init(coder aDecoder: NSCoder!) {
 //        fatalError("NSCoding not supported")
 //    }
     
@@ -150,14 +150,14 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     // MARK: Event handlers
     
     func shiftButtonPressed(sender: KeyButton) {
-//        switch shiftMode {
-//        case .Off:
-//            shiftMode = .On
-//        case .On:
-//            shiftMode = .Caps
-//        case .Caps:
-//            shiftMode = .Off
-//        }
+        switch shiftMode {
+        case .Off:
+            shiftMode = .On
+        case .On:
+            shiftMode = .Caps
+        case .Caps:
+            shiftMode = .Off
+        }
     }
     
     func deleteButtonPressed(sender: KeyButton) {
@@ -230,11 +230,11 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     }
     
     func spaceButtonPressed(sender: KeyButton) {
-//        for suffix in languageProvider.autocapitalizeAfter {
-//            if proxy.documentContextBeforeInput.hasSuffix(suffix) {
-//                shiftMode = .On
-//            }
-//        }
+        for suffix in languageProvider.autocapitalizeAfter {
+            if proxy.documentContextBeforeInput.hasSuffix(suffix) {
+                shiftMode = .On
+            }
+        }
         proxy.insertText(" ")
         updateSuggestions()
     }
@@ -259,33 +259,33 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     }
     
     func handleSwipeLeftForSpaceButtonWithGestureRecognizer(gestureRecognizer: UISwipeGestureRecognizer) {
-//        UIView.animateWithDuration(0.1, animations: {
-//            self.moveButtonLabels(-self.keyWidth)
-//            }, completion: {
-//                (success: Bool) -> Void in
-//                self.languageProviders.increment()
-//                self.languageProvider = self.languageProviders.currentItem!
-//                self.moveButtonLabels(self.keyWidth * 2.0)
-//                UIView.animateWithDuration(0.1) {
-//                    self.moveButtonLabels(-self.keyWidth)
-//                }
-//            }
-//        )
+        UIView.animateWithDuration(0.1, animations: {
+            self.moveButtonLabels(-self.keyWidth)
+            }, completion: {
+                (success: Bool) -> Void in
+                self.languageProviders.increment()
+                self.languageProvider = self.languageProviders.currentItem!
+                self.moveButtonLabels(self.keyWidth * 2.0)
+                UIView.animateWithDuration(0.1) {
+                    self.moveButtonLabels(-self.keyWidth)
+                }
+            }
+        )
     }
     
     func handleSwipeRightForSpaceButtonWithGestureRecognizer(gestureRecognizer: UISwipeGestureRecognizer) {
-//        UIView.animateWithDuration(0.1, animations: {
-//            self.moveButtonLabels(self.keyWidth)
-//            }, completion: {
-//                (success: Bool) -> Void in
-//                self.languageProviders.decrement()
-//                self.languageProvider = self.languageProviders.currentItem!
-//                self.moveButtonLabels(-self.keyWidth * 2.0)
-//                UIView.animateWithDuration(0.1) {
-//                    self.moveButtonLabels(self.keyWidth)
-//                }
-//            }
-//        )
+        UIView.animateWithDuration(0.1, animations: {
+            self.moveButtonLabels(self.keyWidth)
+            }, completion: {
+                (success: Bool) -> Void in
+                self.languageProviders.decrement()
+                self.languageProvider = self.languageProviders.currentItem!
+                self.moveButtonLabels(-self.keyWidth * 2.0)
+                UIView.animateWithDuration(0.1) {
+                    self.moveButtonLabels(self.keyWidth)
+                }
+            }
+        )
     }
     
     func returnButtonPressed(sender: KeyButton) {
@@ -296,15 +296,15 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     // MARK: CharacterButtonDelegate
     
     func handlePressForButton(button: CharacterButton) {
-//        switch shiftMode {
-//        case .Off:
-//            proxy.insertText(button.primaryCharacter.lowercaseString)
-//        case .On:
-//            proxy.insertText(button.primaryCharacter.uppercaseString)
-//            shiftMode = .Off
-//        case .Caps:
-//            proxy.insertText(button.primaryCharacter.uppercaseString)
-//        }
+        switch shiftMode {
+        case .Off:
+            proxy.insertText(button.primaryCharacter.lowercaseString)
+        case .On:
+            proxy.insertText(button.primaryCharacter.uppercaseString)
+            shiftMode = .Off
+        case .Caps:
+            proxy.insertText(button.primaryCharacter.uppercaseString)
+        }
         updateSuggestions()
     }
     
@@ -345,7 +345,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
         for subview in view.subviews as [UIView] {
             let convertPoint = subview.convertPoint(point, fromView: view)
             if subview is KeyButton && subview.pointInside(convertPoint, withEvent: event) {
-                //return subview
+                return subview
             }
         }
         return superResult
@@ -419,7 +419,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
         currentLanguageLabel.adjustsFontSizeToFitWidth = true
         currentLanguageLabel.textColor = UIColor(white: 187.0/255, alpha: 1)
         currentLanguageLabel.textAlignment = .Center
-//        currentLanguageLabel.text = "\(languageProvider.language)"
+        currentLanguageLabel.text = "\(languageProvider.language)"
         spaceButton.addSubview(currentLanguageLabel)
         
         let spaceButtonLongPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: "handleLongPressForSpaceButtonWithGestureRecognizer:")
@@ -460,8 +460,8 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
                 x = spacing
             }
             for (keyIndex, key) in enumerate(row) {
-                let characterButton = CharacterButton(frame: CGRectMake(x, y, keyWidth, keyHeight), primaryCharacter: key, secondaryCharacter: "", tertiaryCharacter: "", delegate: self)
-//                let characterButton = CharacterButton(frame: CGRectMake(x, y, keyWidth, keyHeight), primaryCharacter: key, secondaryCharacter: languageProvider.secondaryCharacters[rowIndex][keyIndex], tertiaryCharacter: languageProvider.tertiaryCharacters[rowIndex][keyIndex], delegate: self)
+//                let characterButton = CharacterButton(frame: CGRectMake(x, y, keyWidth, keyHeight), primaryCharacter: key, secondaryCharacter: "", tertiaryCharacter: "", delegate: self)
+                let characterButton = CharacterButton(frame: CGRectMake(x, y, keyWidth, keyHeight), primaryCharacter: key, secondaryCharacter: languageProvider.secondaryCharacters[rowIndex][keyIndex], tertiaryCharacter: languageProvider.tertiaryCharacters[rowIndex][keyIndex], delegate: self)
                 self.view.addSubview(characterButton)
                 characterButtons[rowIndex].append(characterButton)
                 x += keyWidth + spacing
@@ -493,12 +493,12 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
         // TODO: Figure out an implementation that doesn't use bridgeToObjectiveC, in case of funny unicode characters.
         if let lastWord = lastWordTyped {
             var x = spacing
-//            for suggestion in suggestionProvider.suggestionsForPrefix(lastWord) {
-//                let suggestionButton = SuggestionButton(frame: CGRectMake(x, 0.0, predictiveTextButtonWidth, predictiveTextBoxHeight), title: suggestion, delegate: self)
-//                predictiveTextScrollView?.addSubview(suggestionButton)
-//                suggestionButtons.append(suggestionButton)
-//                x += predictiveTextButtonWidth + spacing
-//            }
+            for suggestion in suggestionProvider.suggestionsForPrefix(lastWord) {
+                let suggestionButton = SuggestionButton(frame: CGRectMake(x, 0.0, predictiveTextButtonWidth, predictiveTextBoxHeight), title: suggestion, delegate: self)
+                predictiveTextScrollView?.addSubview(suggestionButton)
+                suggestionButtons.append(suggestionButton)
+                x += predictiveTextButtonWidth + spacing
+            }
             predictiveTextScrollView!.contentSize = CGSizeMake(x, predictiveTextBoxHeight)
         }
     }

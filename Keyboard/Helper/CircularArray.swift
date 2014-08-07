@@ -7,7 +7,7 @@
 //
 
 /**
- A circular array that can be cycled through.
+    A circular array that can be cycled through.
 */
 class CircularArray<T> {
     

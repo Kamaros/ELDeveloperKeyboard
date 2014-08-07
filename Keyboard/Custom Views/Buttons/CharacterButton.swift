@@ -10,39 +10,39 @@ import Foundation
 import UIKit
 
 /**
- The methods declared in the @a CharacterButtonDelegate protocol allow the adopting delegate to respond to messages from the @a CharacterButton class, handling button presses and swipes.
+    The methods declared in the CharacterButtonDelegate protocol allow the adopting delegate to respond to messages from the CharacterButton class, handling button presses and swipes.
 */
-protocol CharacterButtonDelegate: class {
+protocol CharacterButtonDelegate { // FIXME: Need to change this to CharacterButtonDelegate: class and make delegate property weak after bug is fixed.
     /**
-     Respond to the @a CharacterButton being pressed.
-     @param button 
-            The @a CharacterButton that was pressed.
+        Respond to the CharacterButton being pressed.
+        
+        :param: button The CharacterButton that was pressed.
     */
     func handlePressForButton(button: CharacterButton)
     
     /**
-     Respond to the @a CharacterButton being up-swiped.
-     @param button
-            The @a CharacterButton that was up-swiped.
+        Respond to the CharacterButton being up-swiped.
+     
+        :param: button The CharacterButton that was up-swiped.
     */
     func handleSwipeUpForButton(button: CharacterButton)
     
     /**
-     Respond to the @a CharacterButton being down-swiped.
-     @param button
-            The @a CharacterButton that was down-swiped.
+        Respond to the CharacterButton being down-swiped.
+     
+        :param: button The CharacterButton that was down-swiped.
     */
     func handleSwipeDownForButton(button: CharacterButton)
 }
 
 /**
- @a CharacterButton is a @a KeyButton subclass associated with three characters (primary, secondary, and tertiary) as well as three gestures (press, swipe up, and swipe down).
+    CharacterButton is a KeyButton subclass associated with three characters (primary, secondary, and tertiary) as well as three gestures (press, swipe up, and swipe down).
 */
 class CharacterButton: KeyButton {
     
     // MARK: Properties
     
-    weak var delegate: CharacterButtonDelegate?
+    var delegate: CharacterButtonDelegate?
     
     var primaryCharacter: String {
         didSet {
@@ -115,7 +115,7 @@ class CharacterButton: KeyButton {
         self.addGestureRecognizer(swipeDownGestureRecognizer)
     }
     
-    required init(coder: NSCoder) {
+    required init(coder aDecoder: NSCoder!) {
         fatalError("NSCoding not supported")
     }
     

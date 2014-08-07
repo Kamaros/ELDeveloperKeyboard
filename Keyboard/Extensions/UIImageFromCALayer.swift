@@ -12,8 +12,9 @@ import QuartzCore
 
 extension CALayer {
     /**
-     Creates a UIImage from a CALayer.
-     @return A UIImage that appears identical to the CALayer.
+        Creates a UIImage from a CALayer.
+     
+        :returns: A UIImage that appears identical to the CALayer.
     */
     func UIImageFromCALayer() -> UIImage {
         UIGraphicsBeginImageContextWithOptions(self.frame.size, true, 0)

@@ -9,25 +9,27 @@
 import Foundation
 
 /**
- The @a SuggestionProvider protocol defines an interface for loading a list of weighted terms and providing autosuggest suggestions from those terms.
+    The SuggestionProvider protocol defines an interface for loading an array of weighted terms and providing autosuggest suggestions from those terms.
 */
 protocol SuggestionProvider {
     /**
-     Returns a list of autosuggest suggestions that begin with the prefix string provided.
-     @param prefix
-            The prefix string that suggestions begin with.
+        Returns an array of autosuggest suggestions that begin with the prefix string provided.
+    
+        :param: prefix The prefix string that suggestions begin with.
+    
+        :returns: An array of autosuggest suggestions.
     */
     func suggestionsForPrefix(prefix: String) -> [String]
     
     /**
-     Loads autosuggest terms.
-     @param weightedStrings
-            A list of @a WeightedStrings representing autosuggest terms and their relative frequencies.
+        Loads autosuggest terms.
+    
+        :param: weightedStrings An array of WeightedStrings representing autosuggest terms and their relative frequencies.
     */
     func loadWeightedStrings(weightedStrings: [WeightedString])
     
     /**
-     Clears previously loaded autosuggest terms.
+        Clears previously loaded autosuggest terms.
     */
     func clear()
 }
