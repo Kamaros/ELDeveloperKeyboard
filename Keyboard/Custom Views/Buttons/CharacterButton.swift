@@ -46,21 +46,21 @@ class CharacterButton: KeyButton {
     
     var primaryCharacter: String {
         didSet {
-            if primaryLabel {
+            if primaryLabel != nil {
                 primaryLabel.text = primaryCharacter
             }
         }
     }
     var secondaryCharacter: String {
         didSet {
-            if secondaryLabel {
+            if secondaryLabel != nil {
                 secondaryLabel.text = secondaryCharacter
             }
         }
     }
     var tertiaryCharacter: String {
         didSet {
-            if tertiaryLabel {
+            if tertiaryLabel != nil {
                 tertiaryLabel.text = tertiaryCharacter
             }
         }

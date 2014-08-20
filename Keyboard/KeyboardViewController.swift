@@ -178,7 +178,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
             if deleteButtonTimer == nil {
                 deleteButtonTimer = NSTimer(timeInterval: 0.1, target: self, selector: "handleDeleteButtonTimerTick:", userInfo: nil, repeats: true)
                 deleteButtonTimer!.tolerance = 0.01
-                NSRunLoop.mainRunLoop().addTimer(deleteButtonTimer, forMode: NSDefaultRunLoopMode)
+                NSRunLoop.mainRunLoop().addTimer(deleteButtonTimer!, forMode: NSDefaultRunLoopMode)
             }
         default:
             deleteButtonTimer?.invalidate()
@@ -245,7 +245,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
             if spaceButtonTimer == nil {
                 spaceButtonTimer = NSTimer(timeInterval: 0.1, target: self, selector: "handleSpaceButtonTimerTick:", userInfo: nil, repeats: true)
                 spaceButtonTimer!.tolerance = 0.01
-                NSRunLoop.mainRunLoop().addTimer(spaceButtonTimer, forMode: NSDefaultRunLoopMode)
+                NSRunLoop.mainRunLoop().addTimer(spaceButtonTimer!, forMode: NSDefaultRunLoopMode)
             }
         default:
             spaceButtonTimer?.invalidate()
