@@ -115,8 +115,8 @@ class CharacterButton: KeyButton {
         self.addGestureRecognizer(swipeDownGestureRecognizer)
     }
     
-    required init(coder aDecoder: NSCoder!) {
-        fatalError("NSCoding not supported")
+    required init(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     // MARK: Event handlers

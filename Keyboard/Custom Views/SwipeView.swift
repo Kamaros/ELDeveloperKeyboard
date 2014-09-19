@@ -48,8 +48,8 @@ class SwipeView: UIView {
         self.userInteractionEnabled = false
     }
 
-    required init(coder aDecoder: NSCoder!) {
-        fatalError("NSCoding not supported")
+    required init(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     // MARK: Overridden methods
@@ -98,19 +98,19 @@ class SwipeView: UIView {
         self.setNeedsDisplay()
     }
     
-    override func touchesBegan(touches: NSSet!, withEvent event: UIEvent!) {
+    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
         drawTouch(touches.anyObject() as UITouch)
     }
     
-    override func touchesMoved(touches: NSSet!, withEvent event: UIEvent!) {
+    override func touchesMoved(touches: NSSet, withEvent event: UIEvent) {
         drawTouch(touches.anyObject() as UITouch)
     }
     
-    override func touchesEnded(touches: NSSet!, withEvent event: UIEvent!) {
+    override func touchesEnded(touches: NSSet, withEvent event: UIEvent) {
         clear()
     }
     
-    override func touchesCancelled(touches: NSSet!, withEvent event: UIEvent!) {
+    override func touchesCancelled(touches: NSSet, withEvent event: UIEvent) {
         clear()
     }
 }

@@ -42,16 +42,16 @@ class SuggestionButton: UIButton {
         super.init(frame: frame)
         
         self.setTitle(title, forState: .Normal)
-        self.titleLabel.font = UIFont(name: "HelveticaNeue", size: 18.0)
-        self.titleLabel.textAlignment = .Center
+        self.titleLabel?.font = UIFont(name: "HelveticaNeue", size: 18.0)
+        self.titleLabel?.textAlignment = .Center
         self.setTitleColor(UIColor(white: 238.0/255, alpha: 1), forState: .Normal)
         self.setTitleColor(UIColor(red: 119.0/255, green: 198.0/255, blue: 237.0/255, alpha: 1.0), forState: .Highlighted)
-        self.titleLabel.sizeToFit()
+        self.titleLabel?.sizeToFit()
         self.addTarget(self, action: "buttonPressed:", forControlEvents: .TouchUpInside)
     }
-    
-    required init(coder aDecoder: NSCoder!) {
-        fatalError("NSCoding not supported")
+
+    required init(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     // MARK: Event handlers
