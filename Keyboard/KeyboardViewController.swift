@@ -121,9 +121,9 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
 //        self.languageProvider = languageProviders.currentItem!
 //        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
 //    }
-
-//    required init(coder aDecoder: NSCoder!) {
-//        fatalError("NSCoding not supported")
+//
+//    required init(coder aDecoder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
 //    }
     
     // MARK: Overridden methods
@@ -460,7 +460,6 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
                 x = spacing
             }
             for (keyIndex, key) in enumerate(row) {
-//                let characterButton = CharacterButton(frame: CGRectMake(x, y, keyWidth, keyHeight), primaryCharacter: key, secondaryCharacter: "", tertiaryCharacter: "", delegate: self)
                 let characterButton = CharacterButton(frame: CGRectMake(x, y, keyWidth, keyHeight), primaryCharacter: key, secondaryCharacter: languageProvider.secondaryCharacters[rowIndex][keyIndex], tertiaryCharacter: languageProvider.tertiaryCharacters[rowIndex][keyIndex], delegate: self)
                 self.view.addSubview(characterButton)
                 characterButtons[rowIndex].append(characterButton)
@@ -490,7 +489,6 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
             suggestionButton.removeFromSuperview()
         }
         
-        // TODO: Figure out an implementation that doesn't use bridgeToObjectiveC, in case of funny unicode characters.
         if let lastWord = lastWordTyped {
             var x = spacing
             for suggestion in suggestionProvider.suggestionsForPrefix(lastWord) {

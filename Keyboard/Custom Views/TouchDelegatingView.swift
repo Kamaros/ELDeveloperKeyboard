@@ -12,8 +12,7 @@ import UIKit
 /**
     The methods declared in the TouchForwardingViewDelegate protocol allow the adopting delegate to respond to override the behaviour of hitTest:withEvent: for the TouchForwardingView class.
 */
-protocol TouchForwardingViewDelegate { // FIXME: Need to change this to TouchForwardingViewDelegate: class and make delegate property weak after bug is fixed.
-    
+protocol TouchForwardingViewDelegate: class {
     /**
         Allows the delegate to override the behaviour of hitTest:withEvent: for this view.
      
@@ -30,7 +29,7 @@ class TouchForwardingView: UIView {
     
     // MARK: Properties
     
-    var delegate: TouchForwardingViewDelegate?
+    weak var delegate: TouchForwardingViewDelegate?
     
     // MARK: Constructors
     

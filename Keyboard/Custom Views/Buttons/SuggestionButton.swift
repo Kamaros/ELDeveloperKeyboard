@@ -12,7 +12,7 @@ import UIKit
 /**
     The method declared in the SuggestionButtonDelegate protocol allow the adopting delegate to respond to messages from the SuggestionButton class, handling button presses.
 */
-protocol SuggestionButtonDelegate { // FIXME: Need to change this to SuggestionButtonDelegate: class and make delegate property weak after bug is fixed.
+protocol SuggestionButtonDelegate: class {
     /**
         Respond to the SuggestionButton being pressed.
     
@@ -25,7 +25,7 @@ class SuggestionButton: UIButton {
     
     // MARK: Properties
     
-    var delegate: SuggestionButtonDelegate?
+    weak var delegate: SuggestionButtonDelegate?
     
     var title: String {
         didSet {
