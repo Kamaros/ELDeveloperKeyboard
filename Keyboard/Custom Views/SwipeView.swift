@@ -43,9 +43,9 @@ class SwipeView: UIView {
     
     init(containerView: UIView, topOffset: CGFloat) {
         super.init(frame: CGRectMake(0.0, topOffset, containerView.frame.width, containerView.frame.height - topOffset))
-        self.opaque = false
-        self.backgroundColor = UIColor.clearColor()
-        self.userInteractionEnabled = false
+        opaque = false
+        backgroundColor = UIColor.clearColor()
+        userInteractionEnabled = false
     }
 
     required init(coder aDecoder: NSCoder) {
@@ -81,36 +81,40 @@ class SwipeView: UIView {
         }
     }
     
-    // MARK: Methods
+    // MARK: Overridden methods
     
-    func clear() {
+    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
+        drawTouch(touches.first as? UITouch)
+    }
+    
+    override func touchesMoved(touches: Set<NSObject>, withEvent event: UIEvent) {
+        drawTouch(touches.first as? UITouch)
+    }
+    
+    override func touchesEnded(touches: Set<NSObject>, withEvent event: UIEvent) {
+        clear()
+    }
+
+    override func touchesCancelled(touches: Set<NSObject>!, withEvent event: UIEvent!) {
+        clear()
+    }
+
+    // MARK: Helper methods
+    
+    private func clear() {
         points.removeAll(keepCapacity: false)
-        self.setNeedsDisplay()
+        setNeedsDisplay()
     }
     
-    func drawTouch(touch: UITouch) {
-        let touchPoint = touch.locationInView(self)
-        let point = CGPointMake(touchPoint.x, touchPoint.y)
-        points.append(point)
-        while swipeLength > maxLength {
-            points.removeAtIndex(0)
+    private func drawTouch(touch: UITouch?) {
+        if let touch = touch {
+            let touchPoint = touch.locationInView(self)
+            let point = CGPointMake(touchPoint.x, touchPoint.y)
+            points.append(point)
+            while swipeLength > maxLength {
+                points.removeAtIndex(0)
+            }
+            setNeedsDisplay()
         }
-        self.setNeedsDisplay()
-    }
-    
-    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
-        drawTouch(touches.anyObject() as UITouch)
-    }
-    
-    override func touchesMoved(touches: NSSet, withEvent event: UIEvent) {
-        drawTouch(touches.anyObject() as UITouch)
-    }
-    
-    override func touchesEnded(touches: NSSet, withEvent event: UIEvent) {
-        clear()
-    }
-    
-    override func touchesCancelled(touches: NSSet, withEvent event: UIEvent) {
-        clear()
     }
 }

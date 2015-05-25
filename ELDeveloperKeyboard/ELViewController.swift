@@ -20,10 +20,6 @@ class ELViewController: UIViewController {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
     
-    override init() {
-        super.init()
-    }
-    
     override func loadView() {
         super.loadView()
         self.view = UIView(frame: UIScreen.mainScreen().applicationFrame)

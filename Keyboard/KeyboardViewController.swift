@@ -22,23 +22,27 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
         ["z", "x", "c", "v", "b", "n", "m"]
     ]
     
-    private let suggestionProvider: SuggestionProvider = SuggestionTrie()
+    lazy var suggestionProvider: SuggestionProvider = SuggestionTrie()
     
-    private let languageProviders = CircularArray(items: [DefaultLanguageProvider(), SwiftLanguageProvider()] as [LanguageProvider])
+    lazy var languageProviders = CircularArray(items: [DefaultLanguageProvider(), SwiftLanguageProvider()] as [LanguageProvider])
     
     private let spacing: CGFloat = 4.0
     private let predictiveTextBoxHeight: CGFloat = 24.0
     private var predictiveTextButtonWidth: CGFloat {
-        return (self.view.frame.width - 4 * spacing) / 3.0
+        return (view.frame.width - 4 * spacing) / 3.0
+    }
+    private var keyboardHeight: CGFloat {
+        let interfaceOrientation = UIDevice.currentDevice().orientation
+        return (interfaceOrientation == .Portrait || interfaceOrientation == .PortraitUpsideDown) ? 280.0 : 240.0
     }
     private var keyWidth: CGFloat {
-        return (self.view.frame.width - 11 * spacing) / 10.0
+        return (view.frame.width - 11 * spacing) / 10.0
     }
     private var keyHeight: CGFloat {
-        return (self.view.frame.height - 5 * spacing - predictiveTextBoxHeight) / 4.0
+        return (keyboardHeight - 5 * spacing - predictiveTextBoxHeight) / 4.0
     }
     
-    // MARK: Interface
+    // MARK: User interface
     
     private var swipeView: SwipeView!
     private var predictiveTextScrollView: PredictiveTextScrollView!
@@ -64,15 +68,17 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     
     // MARK: Properties
     
+    private var heightConstraint: NSLayoutConstraint!
+    
     private var proxy: UITextDocumentProxy {
-        return self.textDocumentProxy as UITextDocumentProxy
+        return textDocumentProxy as! UITextDocumentProxy
     }
     
     private var lastWordTyped: String? {
         if let documentContextBeforeInput = proxy.documentContextBeforeInput as NSString? {
             let length = documentContextBeforeInput.length
             if length > 0 && NSCharacterSet.letterCharacterSet().characterIsMember(documentContextBeforeInput.characterAtIndex(length - 1)) {
-                let components = documentContextBeforeInput.componentsSeparatedByCharactersInSet(NSCharacterSet.letterCharacterSet().invertedSet) as [String]
+                let components = documentContextBeforeInput.componentsSeparatedByCharactersInSet(NSCharacterSet.letterCharacterSet().invertedSet) as! [String]
                 return components[components.endIndex - 1]
             }
         }
@@ -128,14 +134,15 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     
     // MARK: Overridden methods
     
-    override func loadView() {
-        let screenRect = UIScreen.mainScreen().bounds
-        self.view = TouchForwardingView(frame: CGRectMake(0.0, predictiveTextBoxHeight, screenRect.width, screenRect.height - predictiveTextBoxHeight), delegate: self)
-    }
+//    override func loadView() {
+//        let screenRect = UIScreen.mainScreen().bounds
+//        self.view = TouchForwardingView(frame: CGRectMake(0.0, predictiveTextBoxHeight, screenRect.width, keyboardHeight - predictiveTextBoxHeight), delegate: self)
+//    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = UIColor(red: 12.0/255, green: 12.0/255, blue: 12.0/255, alpha: 1)
+        view.backgroundColor = UIColor(red: 12.0/255, green: 12.0/255, blue: 12.0/255, alpha: 1)
+        heightConstraint = NSLayoutConstraint(item: self.view, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 0.0, constant: self.keyboardHeight)
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -145,6 +152,13 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
         
     override func didRotateFromInterfaceOrientation(fromInterfaceOrientation: UIInterfaceOrientation) {
         initializeKeyboard()
+    }
+    
+    override func updateViewConstraints() {
+        super.updateViewConstraints()
+        view.removeConstraint(heightConstraint)
+        heightConstraint.constant = keyboardHeight
+        view.addConstraint(heightConstraint)
     }
     
     // MARK: Event handlers
@@ -293,9 +307,9 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
         updateSuggestions()
     }
     
-    // MARK: CharacterButtonDelegate
+    // MARK: CharacterButtonDelegate methods
     
-    func handlePressForButton(button: CharacterButton) {
+    func handlePressForCharacterButton(button: CharacterButton) {
         switch shiftMode {
         case .Off:
             proxy.insertText(button.primaryCharacter.lowercaseString)
@@ -310,7 +324,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     
     func handleSwipeUpForButton(button: CharacterButton) {
         proxy.insertText(button.secondaryCharacter)
-        if countElements(button.secondaryCharacter) > 1 {
+        if count(button.secondaryCharacter) > 1 {
             proxy.insertText(" ")
         }
         updateSuggestions()
@@ -318,15 +332,15 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     
     func handleSwipeDownForButton(button: CharacterButton) {
         proxy.insertText(button.tertiaryCharacter)
-        if countElements(button.tertiaryCharacter) > 1 {
+        if count(button.tertiaryCharacter) > 1 {
             proxy.insertText(" ")
         }
         updateSuggestions()
     }
     
-    // MARK: SuggestionButtonDelegate
+    // MARK: SuggestionButtonDelegate methods
     
-    func handlePressForButton(button: SuggestionButton) {
+    func handlePressForSuggestionButton(button: SuggestionButton) {
         if let lastWord = lastWordTyped {
             for letter in lastWord {
                 proxy.deleteBackward()
@@ -338,23 +352,23 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
         }
     }
     
-    // MARK: TouchForwardingViewDelegate
+    // MARK: TouchForwardingViewDelegate methods
     
     // TODO: Get this method to properly provide the desired behaviour.
     func viewForHitTestWithPoint(point: CGPoint, event: UIEvent?, superResult: UIView?) -> UIView? {
-        for subview in view.subviews as [UIView] {
+        for subview in view.subviews as! [UIView] {
             let convertPoint = subview.convertPoint(point, fromView: view)
             if subview is KeyButton && subview.pointInside(convertPoint, withEvent: event) {
                 return subview
             }
         }
-        return superResult
+        return swipeView
     }
     
     // MARK: Helper methods
     
     private func initializeKeyboard() {
-        for subview in self.view.subviews as [UIView] {
+        for subview in self.view.subviews as! [UIView] {
             subview.removeFromSuperview() // Remove all buttons and gesture recognizers when view is recreated during orientation changes.
         }
 
@@ -470,8 +484,8 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     }
     
     private func addSwipeView() {
-        swipeView = SwipeView(containerView: self.view, topOffset: predictiveTextBoxHeight)
-        self.view.addSubview(swipeView)
+        swipeView = SwipeView(containerView: view, topOffset: predictiveTextBoxHeight)
+        view.addSubview(swipeView)
     }
     
     private func moveButtonLabels(dx: CGFloat) {

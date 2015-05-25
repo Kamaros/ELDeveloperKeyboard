@@ -36,6 +36,8 @@ class SwiftLanguageProvider: LanguageProvider {
         WeightedString(term: "in", weight: 29),
         WeightedString(term: "return", weight: 25),
         WeightedString(term: "Array", weight: 22),
+        WeightedString(term: "Dictionary", weight: 22),
+        WeightedString(term: "Set", weight: 22),
         WeightedString(term: "for", weight: 21),
         WeightedString(term: "while", weight: 20),
         WeightedString(term: "import", weight: 19),

@@ -42,15 +42,6 @@ class CircularArray<T> {
     
     init(items: [T]) {
         self.items = items
-        
-        var strings = [String]()
-        
-        strings.sort({
-            (s1: String, s2: String) in
-            return s1 > s2
-            })
-        
-        strings.sort {$0 > $1}
     }
     
     // MARK: Methods

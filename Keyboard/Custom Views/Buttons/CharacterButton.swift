@@ -18,7 +18,7 @@ protocol CharacterButtonDelegate: class {
         
         :param: button The CharacterButton that was pressed.
     */
-    func handlePressForButton(button: CharacterButton)
+    func handlePressForCharacterButton(button: CharacterButton)
     
     /**
         Respond to the CharacterButton being up-swiped.
@@ -81,38 +81,38 @@ class CharacterButton: KeyButton {
         
         super.init(frame: frame)
         
-        self.primaryLabel = UILabel(frame: CGRectMake(frame.width * 0.2, 0.0, frame.width * 0.8, frame.height * 0.95))
-        self.primaryLabel.font = UIFont(name: "HelveticaNeue", size: 18.0)
-        self.primaryLabel.textColor = UIColor(white: 238.0/255, alpha: 1.0)
-        self.primaryLabel.textAlignment = .Left
-        self.primaryLabel.text = primaryCharacter
-        self.addSubview(self.primaryLabel)
+        primaryLabel = UILabel(frame: CGRectMake(frame.width * 0.2, 0.0, frame.width * 0.8, frame.height * 0.95))
+        primaryLabel.font = UIFont(name: "HelveticaNeue", size: 18.0)
+        primaryLabel.textColor = UIColor(white: 238.0/255, alpha: 1.0)
+        primaryLabel.textAlignment = .Left
+        primaryLabel.text = primaryCharacter
+        addSubview(primaryLabel)
         
-        self.secondaryLabel = UILabel(frame: CGRectMake(0.0, 0.0, frame.width * 0.9, frame.height * 0.3))
-        self.secondaryLabel.font = UIFont(name: "HelveticaNeue", size: 12.0)
-        self.secondaryLabel.adjustsFontSizeToFitWidth = true
-        self.secondaryLabel.textColor = UIColor(white: 187.0/255, alpha: 1.0)
-        self.secondaryLabel.textAlignment = .Right
-        self.secondaryLabel.text = secondaryCharacter
-        self.addSubview(self.secondaryLabel)
+        secondaryLabel = UILabel(frame: CGRectMake(0.0, 0.0, frame.width * 0.9, frame.height * 0.3))
+        secondaryLabel.font = UIFont(name: "HelveticaNeue", size: 12.0)
+        secondaryLabel.adjustsFontSizeToFitWidth = true
+        secondaryLabel.textColor = UIColor(white: 187.0/255, alpha: 1.0)
+        secondaryLabel.textAlignment = .Right
+        secondaryLabel.text = secondaryCharacter
+        addSubview(secondaryLabel)
         
-        self.tertiaryLabel = UILabel(frame: CGRectMake(0.0, frame.height * 0.65, frame.width * 0.9, frame.height * 0.25))
-        self.tertiaryLabel.font = UIFont(name: "HelveticaNeue", size: 12.0)
-        self.tertiaryLabel.textColor = UIColor(white: 187.0/255, alpha: 1.0)
-        self.tertiaryLabel.adjustsFontSizeToFitWidth = true
-        self.tertiaryLabel.textAlignment = .Right
-        self.tertiaryLabel.text = tertiaryCharacter
-        self.addSubview(self.tertiaryLabel)
+        tertiaryLabel = UILabel(frame: CGRectMake(0.0, frame.height * 0.65, frame.width * 0.9, frame.height * 0.25))
+        tertiaryLabel.font = UIFont(name: "HelveticaNeue", size: 12.0)
+        tertiaryLabel.textColor = UIColor(white: 187.0/255, alpha: 1.0)
+        tertiaryLabel.adjustsFontSizeToFitWidth = true
+        tertiaryLabel.textAlignment = .Right
+        tertiaryLabel.text = tertiaryCharacter
+        addSubview(tertiaryLabel)
         
-        self.addTarget(self, action: "buttonPressed:", forControlEvents: .TouchUpInside)
+        addTarget(self, action: "buttonPressed:", forControlEvents: .TouchUpInside)
         
         let swipeUpGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "buttonSwipedUp:")
         swipeUpGestureRecognizer.direction = .Up
-        self.addGestureRecognizer(swipeUpGestureRecognizer)
+        addGestureRecognizer(swipeUpGestureRecognizer)
         
         let swipeDownGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "buttonSwipedDown:")
         swipeDownGestureRecognizer.direction = .Down
-        self.addGestureRecognizer(swipeDownGestureRecognizer)
+        addGestureRecognizer(swipeDownGestureRecognizer)
     }
     
     required init(coder aDecoder: NSCoder) {
@@ -122,7 +122,7 @@ class CharacterButton: KeyButton {
     // MARK: Event handlers
     
     func buttonPressed(sender: KeyButton) {
-        delegate?.handlePressForButton(self)
+        delegate?.handlePressForCharacterButton(self)
     }
     
     func buttonSwipedUp(swipeUpGestureRecognizer: UISwipeGestureRecognizer) {

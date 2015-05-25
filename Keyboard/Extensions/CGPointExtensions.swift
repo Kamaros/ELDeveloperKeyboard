@@ -16,7 +16,7 @@ extension CGPoint {
         :returns: The CGPoint at the midpoint of two CGPoints.
     */
     func midPoint(point: CGPoint) -> CGPoint {
-        return CGPointMake((self.x + point.x) / 2.0, (self.y + point.y) / 2.0)
+        return CGPointMake((x + point.x) / 2.0, (y + point.y) / 2.0)
     }
     
     /**
@@ -24,8 +24,8 @@ extension CGPoint {
         :returns: The distance between two CGPoints.
     */
     func distance(point: CGPoint) -> CGFloat {
-        var dx = self.x - point.x
-        var dy = self.y - point.y
+        var dx = x - point.x
+        var dy = y - point.y
         return sqrt(dx * dx + dy * dy)
     }
 }
